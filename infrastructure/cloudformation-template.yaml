@@ -1,0 +1,1844 @@
+---
+Metadata:
+  AWSToolsMetrics:
+    IaC_Generator: "arn:aws:cloudformation:us-east-1:364046406796:generatedTemplate/30ef1101-ec3c-4e4c-9182-65733467127c"
+Parameters:
+  LambdaFunctionAriaorchestratorCodeS3KeyQeonV:
+    NoEcho: "true"
+    Type: "String"
+    Description: "The Amazon S3 key of the deployment package."
+  LambdaFunctionAriasnsnotifyCodeZipFile33UGh:
+    NoEcho: "true"
+    Type: "String"
+    Description: "(Node.js and Python) The source code of your Lambda function. If\
+      \ you include your function source inline with this parameter, CFN places it\
+      \ in a file named ``index`` and zips it to create a [deployment package](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-package.html).\
+      \ This zip file cannot exceed 4MB. For the ``Handler`` property, the first part\
+      \ of the handler identifier must be ``index``. For example, ``index.handler``.\n\
+      \  When you specify source code inline for a Node.js function, the ``index``\
+      \ file that CFN creates uses the extension ``.js``. This means that Node.js\
+      \ treats the file as a CommonJS module.\n When using Node.js 24 or later, Node.js\
+      \ can automatically detect if a ``.js`` file should be treated as CommonJS or\
+      \ as an ES module. To enable auto-detection, add the ``--experimental-detect-module``\
+      \ flag to the ``NODE_OPTIONS`` environment variable. For more information, see\
+      \ [Experimental Node.js features](https://docs.aws.amazon.com//lambda/latest/dg/lambda-nodejs.html#nodejs-experimental-features).\n\
+      \   For JSON, you must escape quotes and special characters such as newline\
+      \ (``\\n``) with a backslash.\n If you specify a function that interacts with\
+      \ an AWS CloudFormation custom resource, you don't have to write your own functions\
+      \ to send responses to the custom resource that invoked the function. AWS CloudFormation\
+      \ provides a response module ([cfn-response](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-lambda-function-code-cfnresponsemodule.html))\
+      \ that simplifies sending responses. See [Using Lambda with CloudFormation](https://docs.aws.amazon.com/lambda/latest/dg/services-cloudformation.html)\
+      \ for details."
+  LambdaFunctionAriawsconnectCodeS3Bucketz8VpU:
+    NoEcho: "true"
+    Type: "String"
+    Description: "An Amazon S3 bucket in the same AWS-Region as your function. The\
+      \ bucket can be in a different AWS-account."
+  LambdaFunctionAriawsmessageCodeS3KeyY1poc:
+    NoEcho: "true"
+    Type: "String"
+    Description: "The Amazon S3 key of the deployment package."
+  LambdaFunctionAriapatientidentificationCodeSourceKMSKeyArnoKdEB:
+    NoEcho: "true"
+    Type: "String"
+    Description: "The ARN of the KMSlong (KMS) customer managed key that's used to\
+      \ encrypt your function's .zip deployment package. If you don't provide a customer\
+      \ managed key, Lambda uses an [owned key](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#aws-owned-cmk)."
+  LambdaFunctionAriadocumenttextractCodeS3ObjectVersionrVQtO:
+    NoEcho: "true"
+    Type: "String"
+    Description: "For versioned objects, the version of the deployment package object\
+      \ to use."
+  LambdaFunctionAriasnsnotifyCodeS3BucketRx3PF:
+    NoEcho: "true"
+    Type: "String"
+    Description: "An Amazon S3 bucket in the same AWS-Region as your function. The\
+      \ bucket can be in a different AWS-account."
+  LambdaFunctionAriaorchestratorCodeZipFilezMl7G:
+    NoEcho: "true"
+    Type: "String"
+    Description: "(Node.js and Python) The source code of your Lambda function. If\
+      \ you include your function source inline with this parameter, CFN places it\
+      \ in a file named ``index`` and zips it to create a [deployment package](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-package.html).\
+      \ This zip file cannot exceed 4MB. For the ``Handler`` property, the first part\
+      \ of the handler identifier must be ``index``. For example, ``index.handler``.\n\
+      \  When you specify source code inline for a Node.js function, the ``index``\
+      \ file that CFN creates uses the extension ``.js``. This means that Node.js\
+      \ treats the file as a CommonJS module.\n When using Node.js 24 or later, Node.js\
+      \ can automatically detect if a ``.js`` file should be treated as CommonJS or\
+      \ as an ES module. To enable auto-detection, add the ``--experimental-detect-module``\
+      \ flag to the ``NODE_OPTIONS`` environment variable. For more information, see\
+      \ [Experimental Node.js features](https://docs.aws.amazon.com//lambda/latest/dg/lambda-nodejs.html#nodejs-experimental-features).\n\
+      \   For JSON, you must escape quotes and special characters such as newline\
+      \ (``\\n``) with a backslash.\n If you specify a function that interacts with\
+      \ an AWS CloudFormation custom resource, you don't have to write your own functions\
+      \ to send responses to the custom resource that invoked the function. AWS CloudFormation\
+      \ provides a response module ([cfn-response](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-lambda-function-code-cfnresponsemodule.html))\
+      \ that simplifies sending responses. See [Using Lambda with CloudFormation](https://docs.aws.amazon.com/lambda/latest/dg/services-cloudformation.html)\
+      \ for details."
+  LambdaFunctionAriasnsnotifyCodeS3ObjectVersionUjxGm:
+    NoEcho: "true"
+    Type: "String"
+    Description: "For versioned objects, the version of the deployment package object\
+      \ to use."
+  LambdaFunctionAriaorchestratorCodeImageUriPfZ5W:
+    NoEcho: "true"
+    Type: "String"
+    Description: "URI of a [container image](https://docs.aws.amazon.com/lambda/latest/dg/lambda-images.html)\
+      \ in the Amazon ECR registry."
+  LambdaFunctionAriawsconnectCodeS3ObjectVersionCVAgw:
+    NoEcho: "true"
+    Type: "String"
+    Description: "For versioned objects, the version of the deployment package object\
+      \ to use."
+  LambdaFunctionAriawsconnectCodeS3KeyUiesd:
+    NoEcho: "true"
+    Type: "String"
+    Description: "The Amazon S3 key of the deployment package."
+  LambdaFunctionAriapatientidentificationCodeS3BucketwNs4N:
+    NoEcho: "true"
+    Type: "String"
+    Description: "An Amazon S3 bucket in the same AWS-Region as your function. The\
+      \ bucket can be in a different AWS-account."
+  LambdaFunctionAriaorchestratorCodeSourceKMSKeyArnYIAHz:
+    NoEcho: "true"
+    Type: "String"
+    Description: "The ARN of the KMSlong (KMS) customer managed key that's used to\
+      \ encrypt your function's .zip deployment package. If you don't provide a customer\
+      \ managed key, Lambda uses an [owned key](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#aws-owned-cmk)."
+  LambdaFunctionAriawsmessageCodeZipFileMLkmq:
+    NoEcho: "true"
+    Type: "String"
+    Description: "(Node.js and Python) The source code of your Lambda function. If\
+      \ you include your function source inline with this parameter, CFN places it\
+      \ in a file named ``index`` and zips it to create a [deployment package](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-package.html).\
+      \ This zip file cannot exceed 4MB. For the ``Handler`` property, the first part\
+      \ of the handler identifier must be ``index``. For example, ``index.handler``.\n\
+      \  When you specify source code inline for a Node.js function, the ``index``\
+      \ file that CFN creates uses the extension ``.js``. This means that Node.js\
+      \ treats the file as a CommonJS module.\n When using Node.js 24 or later, Node.js\
+      \ can automatically detect if a ``.js`` file should be treated as CommonJS or\
+      \ as an ES module. To enable auto-detection, add the ``--experimental-detect-module``\
+      \ flag to the ``NODE_OPTIONS`` environment variable. For more information, see\
+      \ [Experimental Node.js features](https://docs.aws.amazon.com//lambda/latest/dg/lambda-nodejs.html#nodejs-experimental-features).\n\
+      \   For JSON, you must escape quotes and special characters such as newline\
+      \ (``\\n``) with a backslash.\n If you specify a function that interacts with\
+      \ an AWS CloudFormation custom resource, you don't have to write your own functions\
+      \ to send responses to the custom resource that invoked the function. AWS CloudFormation\
+      \ provides a response module ([cfn-response](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-lambda-function-code-cfnresponsemodule.html))\
+      \ that simplifies sending responses. See [Using Lambda with CloudFormation](https://docs.aws.amazon.com/lambda/latest/dg/services-cloudformation.html)\
+      \ for details."
+  LambdaFunctionAriawsconnectCodeZipFileFuCG6:
+    NoEcho: "true"
+    Type: "String"
+    Description: "(Node.js and Python) The source code of your Lambda function. If\
+      \ you include your function source inline with this parameter, CFN places it\
+      \ in a file named ``index`` and zips it to create a [deployment package](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-package.html).\
+      \ This zip file cannot exceed 4MB. For the ``Handler`` property, the first part\
+      \ of the handler identifier must be ``index``. For example, ``index.handler``.\n\
+      \  When you specify source code inline for a Node.js function, the ``index``\
+      \ file that CFN creates uses the extension ``.js``. This means that Node.js\
+      \ treats the file as a CommonJS module.\n When using Node.js 24 or later, Node.js\
+      \ can automatically detect if a ``.js`` file should be treated as CommonJS or\
+      \ as an ES module. To enable auto-detection, add the ``--experimental-detect-module``\
+      \ flag to the ``NODE_OPTIONS`` environment variable. For more information, see\
+      \ [Experimental Node.js features](https://docs.aws.amazon.com//lambda/latest/dg/lambda-nodejs.html#nodejs-experimental-features).\n\
+      \   For JSON, you must escape quotes and special characters such as newline\
+      \ (``\\n``) with a backslash.\n If you specify a function that interacts with\
+      \ an AWS CloudFormation custom resource, you don't have to write your own functions\
+      \ to send responses to the custom resource that invoked the function. AWS CloudFormation\
+      \ provides a response module ([cfn-response](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-lambda-function-code-cfnresponsemodule.html))\
+      \ that simplifies sending responses. See [Using Lambda with CloudFormation](https://docs.aws.amazon.com/lambda/latest/dg/services-cloudformation.html)\
+      \ for details."
+  LambdaFunctionAriawsmessageCodeS3ObjectVersionGDH0f:
+    NoEcho: "true"
+    Type: "String"
+    Description: "For versioned objects, the version of the deployment package object\
+      \ to use."
+  LambdaFunctionAriapatientidentificationCodeS3ObjectVersionJA0F8:
+    NoEcho: "true"
+    Type: "String"
+    Description: "For versioned objects, the version of the deployment package object\
+      \ to use."
+  LambdaFunctionAriapatientidentificationCodeS3KeyDQEoL:
+    NoEcho: "true"
+    Type: "String"
+    Description: "The Amazon S3 key of the deployment package."
+  LambdaFunctionAriadocumenttextractCodeS3KeyvRssM:
+    NoEcho: "true"
+    Type: "String"
+    Description: "The Amazon S3 key of the deployment package."
+  LambdaFunctionAriasnsnotifyCodeImageUri2Tyg8:
+    NoEcho: "true"
+    Type: "String"
+    Description: "URI of a [container image](https://docs.aws.amazon.com/lambda/latest/dg/lambda-images.html)\
+      \ in the Amazon ECR registry."
+  LambdaFunctionAriasnsnotifyCodeSourceKMSKeyArnQq9U7:
+    NoEcho: "true"
+    Type: "String"
+    Description: "The ARN of the KMSlong (KMS) customer managed key that's used to\
+      \ encrypt your function's .zip deployment package. If you don't provide a customer\
+      \ managed key, Lambda uses an [owned key](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#aws-owned-cmk)."
+  LambdaFunctionAriawsconnectCodeSourceKMSKeyArnVofFF:
+    NoEcho: "true"
+    Type: "String"
+    Description: "The ARN of the KMSlong (KMS) customer managed key that's used to\
+      \ encrypt your function's .zip deployment package. If you don't provide a customer\
+      \ managed key, Lambda uses an [owned key](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#aws-owned-cmk)."
+  LambdaFunctionAriadocumenttextractCodeImageUri1nxPK:
+    NoEcho: "true"
+    Type: "String"
+    Description: "URI of a [container image](https://docs.aws.amazon.com/lambda/latest/dg/lambda-images.html)\
+      \ in the Amazon ECR registry."
+  LambdaFunctionAriawsdisconnectCodeImageUri2SLtw:
+    NoEcho: "true"
+    Type: "String"
+    Description: "URI of a [container image](https://docs.aws.amazon.com/lambda/latest/dg/lambda-images.html)\
+      \ in the Amazon ECR registry."
+  LambdaFunctionAriawsdisconnectCodeZipFileevgr6:
+    NoEcho: "true"
+    Type: "String"
+    Description: "(Node.js and Python) The source code of your Lambda function. If\
+      \ you include your function source inline with this parameter, CFN places it\
+      \ in a file named ``index`` and zips it to create a [deployment package](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-package.html).\
+      \ This zip file cannot exceed 4MB. For the ``Handler`` property, the first part\
+      \ of the handler identifier must be ``index``. For example, ``index.handler``.\n\
+      \  When you specify source code inline for a Node.js function, the ``index``\
+      \ file that CFN creates uses the extension ``.js``. This means that Node.js\
+      \ treats the file as a CommonJS module.\n When using Node.js 24 or later, Node.js\
+      \ can automatically detect if a ``.js`` file should be treated as CommonJS or\
+      \ as an ES module. To enable auto-detection, add the ``--experimental-detect-module``\
+      \ flag to the ``NODE_OPTIONS`` environment variable. For more information, see\
+      \ [Experimental Node.js features](https://docs.aws.amazon.com//lambda/latest/dg/lambda-nodejs.html#nodejs-experimental-features).\n\
+      \   For JSON, you must escape quotes and special characters such as newline\
+      \ (``\\n``) with a backslash.\n If you specify a function that interacts with\
+      \ an AWS CloudFormation custom resource, you don't have to write your own functions\
+      \ to send responses to the custom resource that invoked the function. AWS CloudFormation\
+      \ provides a response module ([cfn-response](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-lambda-function-code-cfnresponsemodule.html))\
+      \ that simplifies sending responses. See [Using Lambda with CloudFormation](https://docs.aws.amazon.com/lambda/latest/dg/services-cloudformation.html)\
+      \ for details."
+  LambdaFunctionAriadocumenttextractCodeS3BucketCl5ev:
+    NoEcho: "true"
+    Type: "String"
+    Description: "An Amazon S3 bucket in the same AWS-Region as your function. The\
+      \ bucket can be in a different AWS-account."
+  LambdaFunctionAriawsdisconnectCodeS3ObjectVersiondCXUD:
+    NoEcho: "true"
+    Type: "String"
+    Description: "For versioned objects, the version of the deployment package object\
+      \ to use."
+  LambdaFunctionAriadocumenttextractCodeZipFile96LVn:
+    NoEcho: "true"
+    Type: "String"
+    Description: "(Node.js and Python) The source code of your Lambda function. If\
+      \ you include your function source inline with this parameter, CFN places it\
+      \ in a file named ``index`` and zips it to create a [deployment package](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-package.html).\
+      \ This zip file cannot exceed 4MB. For the ``Handler`` property, the first part\
+      \ of the handler identifier must be ``index``. For example, ``index.handler``.\n\
+      \  When you specify source code inline for a Node.js function, the ``index``\
+      \ file that CFN creates uses the extension ``.js``. This means that Node.js\
+      \ treats the file as a CommonJS module.\n When using Node.js 24 or later, Node.js\
+      \ can automatically detect if a ``.js`` file should be treated as CommonJS or\
+      \ as an ES module. To enable auto-detection, add the ``--experimental-detect-module``\
+      \ flag to the ``NODE_OPTIONS`` environment variable. For more information, see\
+      \ [Experimental Node.js features](https://docs.aws.amazon.com//lambda/latest/dg/lambda-nodejs.html#nodejs-experimental-features).\n\
+      \   For JSON, you must escape quotes and special characters such as newline\
+      \ (``\\n``) with a backslash.\n If you specify a function that interacts with\
+      \ an AWS CloudFormation custom resource, you don't have to write your own functions\
+      \ to send responses to the custom resource that invoked the function. AWS CloudFormation\
+      \ provides a response module ([cfn-response](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-lambda-function-code-cfnresponsemodule.html))\
+      \ that simplifies sending responses. See [Using Lambda with CloudFormation](https://docs.aws.amazon.com/lambda/latest/dg/services-cloudformation.html)\
+      \ for details."
+  LambdaFunctionAriaorchestratorCodeS3ObjectVersionfxscV:
+    NoEcho: "true"
+    Type: "String"
+    Description: "For versioned objects, the version of the deployment package object\
+      \ to use."
+  LambdaFunctionAriawsmessageCodeS3Bucketjbuzn:
+    NoEcho: "true"
+    Type: "String"
+    Description: "An Amazon S3 bucket in the same AWS-Region as your function. The\
+      \ bucket can be in a different AWS-account."
+  LambdaFunctionAriadocumenttextractCodeSourceKMSKeyArnuLDkx:
+    NoEcho: "true"
+    Type: "String"
+    Description: "The ARN of the KMSlong (KMS) customer managed key that's used to\
+      \ encrypt your function's .zip deployment package. If you don't provide a customer\
+      \ managed key, Lambda uses an [owned key](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#aws-owned-cmk)."
+  LambdaFunctionAriasnsnotifyCodeS3KeyqUBKW:
+    NoEcho: "true"
+    Type: "String"
+    Description: "The Amazon S3 key of the deployment package."
+  LambdaFunctionAriawsdisconnectCodeS3BucketLnLHS:
+    NoEcho: "true"
+    Type: "String"
+    Description: "An Amazon S3 bucket in the same AWS-Region as your function. The\
+      \ bucket can be in a different AWS-account."
+  LambdaFunctionAriawsdisconnectCodeSourceKMSKeyArn22zHD:
+    NoEcho: "true"
+    Type: "String"
+    Description: "The ARN of the KMSlong (KMS) customer managed key that's used to\
+      \ encrypt your function's .zip deployment package. If you don't provide a customer\
+      \ managed key, Lambda uses an [owned key](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#aws-owned-cmk)."
+  LambdaFunctionAriawsmessageCodeSourceKMSKeyArnM0vZ1:
+    NoEcho: "true"
+    Type: "String"
+    Description: "The ARN of the KMSlong (KMS) customer managed key that's used to\
+      \ encrypt your function's .zip deployment package. If you don't provide a customer\
+      \ managed key, Lambda uses an [owned key](https://docs.aws.amazon.com/kms/latest/developerguide/concepts.html#aws-owned-cmk)."
+  LambdaFunctionAriawsdisconnectCodeS3KeyuxfLf:
+    NoEcho: "true"
+    Type: "String"
+    Description: "The Amazon S3 key of the deployment package."
+  LambdaFunctionAriawsmessageCodeImageUriNL4Jz:
+    NoEcho: "true"
+    Type: "String"
+    Description: "URI of a [container image](https://docs.aws.amazon.com/lambda/latest/dg/lambda-images.html)\
+      \ in the Amazon ECR registry."
+  LambdaFunctionAriaorchestratorCodeS3Bucket3JP56:
+    NoEcho: "true"
+    Type: "String"
+    Description: "An Amazon S3 bucket in the same AWS-Region as your function. The\
+      \ bucket can be in a different AWS-account."
+  LambdaFunctionAriawsconnectCodeImageUri87BBW:
+    NoEcho: "true"
+    Type: "String"
+    Description: "URI of a [container image](https://docs.aws.amazon.com/lambda/latest/dg/lambda-images.html)\
+      \ in the Amazon ECR registry."
+  LambdaFunctionAriapatientidentificationCodeImageUrij3VI4:
+    NoEcho: "true"
+    Type: "String"
+    Description: "URI of a [container image](https://docs.aws.amazon.com/lambda/latest/dg/lambda-images.html)\
+      \ in the Amazon ECR registry."
+  LambdaFunctionAriapatientidentificationCodeZipFile1eoJF:
+    NoEcho: "true"
+    Type: "String"
+    Description: "(Node.js and Python) The source code of your Lambda function. If\
+      \ you include your function source inline with this parameter, CFN places it\
+      \ in a file named ``index`` and zips it to create a [deployment package](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-package.html).\
+      \ This zip file cannot exceed 4MB. For the ``Handler`` property, the first part\
+      \ of the handler identifier must be ``index``. For example, ``index.handler``.\n\
+      \  When you specify source code inline for a Node.js function, the ``index``\
+      \ file that CFN creates uses the extension ``.js``. This means that Node.js\
+      \ treats the file as a CommonJS module.\n When using Node.js 24 or later, Node.js\
+      \ can automatically detect if a ``.js`` file should be treated as CommonJS or\
+      \ as an ES module. To enable auto-detection, add the ``--experimental-detect-module``\
+      \ flag to the ``NODE_OPTIONS`` environment variable. For more information, see\
+      \ [Experimental Node.js features](https://docs.aws.amazon.com//lambda/latest/dg/lambda-nodejs.html#nodejs-experimental-features).\n\
+      \   For JSON, you must escape quotes and special characters such as newline\
+      \ (``\\n``) with a backslash.\n If you specify a function that interacts with\
+      \ an AWS CloudFormation custom resource, you don't have to write your own functions\
+      \ to send responses to the custom resource that invoked the function. AWS CloudFormation\
+      \ provides a response module ([cfn-response](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-lambda-function-code-cfnresponsemodule.html))\
+      \ that simplifies sending responses. See [Using Lambda with CloudFormation](https://docs.aws.amazon.com/lambda/latest/dg/services-cloudformation.html)\
+      \ for details."
+Resources:
+  LambdaFunctionAriasnsnotify:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Lambda::Function"
+    DeletionPolicy: "Retain"
+    Properties:
+      MemorySize: 128
+      Description: ""
+      TracingConfig:
+        Mode: "Active"
+      Timeout: 3
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: "Auto"
+      Handler: "lambda_function.lambda_handler"
+      Code:
+        SourceKMSKeyArn:
+          Ref: "LambdaFunctionAriasnsnotifyCodeSourceKMSKeyArnQq9U7"
+        S3ObjectVersion:
+          Ref: "LambdaFunctionAriasnsnotifyCodeS3ObjectVersionUjxGm"
+        S3Bucket:
+          Ref: "LambdaFunctionAriasnsnotifyCodeS3BucketRx3PF"
+        ZipFile:
+          Ref: "LambdaFunctionAriasnsnotifyCodeZipFile33UGh"
+        ImageUri:
+          Ref: "LambdaFunctionAriasnsnotifyCodeImageUri2Tyg8"
+        S3Key:
+          Ref: "LambdaFunctionAriasnsnotifyCodeS3KeyqUBKW"
+      Role: "arn:aws:iam::364046406796:role/service-role/aria-sns-notify-role-z61y9q3p"
+      FileSystemConfigs: []
+      FunctionName: "aria-sns-notify"
+      Runtime: "python3.14"
+      PackageType: "Zip"
+      LoggingConfig:
+        LogFormat: "Text"
+        LogGroup: "/aws/lambda/aria-sns-notify"
+      RecursiveLoop: "Terminate"
+      Environment:
+        Variables:
+          TOPIC_ARN: "arn:aws:sns:us-east-1:364046406796:project-aria-doctor-notificationsfifo"
+      EphemeralStorage:
+        Size: 512
+      Layers:
+      - "arn:aws:lambda:us-east-1:364046406796:layer:xray-layer:1"
+      Tags:
+      - Value: "no"
+        Key: "auto-delete"
+      Architectures:
+      - "x86_64"
+  ApiGatewayV2DeploymentXJ:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGatewayV2::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      ApiId: "8ko3wl8l0c"
+  S3BucketPolicyAriapatientapp:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::S3::BucketPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      Bucket: "aria-patient-app"
+      PolicyDocument:
+        Version: "2008-10-17"
+        Statement:
+        - Condition:
+            StringEquals:
+              AWS:SourceArn: "arn:aws:cloudfront::364046406796:distribution/E1PUJANLUDZPNH"
+          Resource: "arn:aws:s3:::aria-patient-app/*"
+          Action: "s3:GetObject"
+          Effect: "Allow"
+          Principal:
+            Service: "cloudfront.amazonaws.com"
+          Sid: "AllowCloudFrontServicePrincipal"
+        Id: "PolicyForCloudFrontPrivateContent"
+  ApiGatewayV2DeploymentH3:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGatewayV2::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      ApiId: "8ko3wl8l0c"
+      Description: "Automatic deployment triggered by changes to the Api configuration"
+  ApiGatewayV2IntegrationAy:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGatewayV2::Integration"
+    DeletionPolicy: "Retain"
+    Properties:
+      IntegrationUri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:364046406796:function:aria-ws-disconnect/invocations"
+      PayloadFormatVersion: "1.0"
+      ConnectionType: "INTERNET"
+      RequestTemplates: {}
+      ResponseParameters: {}
+      TimeoutInMillis: 29000
+      ApiId: "8ko3wl8l0c"
+      IntegrationMethod: "POST"
+      IntegrationType: "AWS_PROXY"
+      PassthroughBehavior: "WHEN_NO_MATCH"
+  LambdaFunctionAriawsmessage:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Lambda::Function"
+    DeletionPolicy: "Retain"
+    Properties:
+      MemorySize: 128
+      Description: ""
+      TracingConfig:
+        Mode: "PassThrough"
+      Timeout: 3
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: "Auto"
+      Handler: "lambda_function.lambda_handler"
+      Code:
+        SourceKMSKeyArn:
+          Ref: "LambdaFunctionAriawsmessageCodeSourceKMSKeyArnM0vZ1"
+        S3ObjectVersion:
+          Ref: "LambdaFunctionAriawsmessageCodeS3ObjectVersionGDH0f"
+        S3Bucket:
+          Ref: "LambdaFunctionAriawsmessageCodeS3Bucketjbuzn"
+        ZipFile:
+          Ref: "LambdaFunctionAriawsmessageCodeZipFileMLkmq"
+        ImageUri:
+          Ref: "LambdaFunctionAriawsmessageCodeImageUriNL4Jz"
+        S3Key:
+          Ref: "LambdaFunctionAriawsmessageCodeS3KeyY1poc"
+      Role: "arn:aws:iam::364046406796:role/service-role/aria-ws-message-role-pkzse82x"
+      FileSystemConfigs: []
+      FunctionName: "aria-ws-message"
+      Runtime: "python3.14"
+      PackageType: "Zip"
+      LoggingConfig:
+        LogFormat: "Text"
+        LogGroup: "/aws/lambda/aria-ws-message"
+      RecursiveLoop: "Terminate"
+      Environment:
+        Variables:
+          CONVERSATION_BUCKET: "aria-consultations"
+          CONNECTIONS_TABLE: "aria-ws-connections"
+      EphemeralStorage:
+        Size: 512
+      Architectures:
+      - "x86_64"
+  S3BucketAriapatientapp:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: "Retain"
+    Properties:
+      AbacStatus: "Disabled"
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        BlockPublicAcls: true
+      BucketName: "aria-patient-app"
+      OwnershipControls:
+        Rules:
+        - ObjectOwnership: "BucketOwnerEnforced"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - BucketKeyEnabled: true
+          BlockedEncryptionTypes:
+            EncryptionType:
+            - "SSE-C"
+          ServerSideEncryptionByDefault:
+            SSEAlgorithm: "AES256"
+      WebsiteConfiguration:
+        IndexDocument: "index.html"
+      VersioningConfiguration:
+        Status: "Enabled"
+      Tags:
+      - Value: "no"
+        Key: "auto-delete"
+  ApiGatewayResource:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Resource"
+    DeletionPolicy: "Retain"
+    Properties:
+      ParentId: "eonqkipv55"
+      PathPart: "identify"
+      RestApiId: "cytghce6w0"
+  IAMManagedPolicyPolicyariahealthscribepolicy:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "aria-healthscribe-policy"
+      Path: "/"
+      Description: ""
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "arn:aws:s3:::aria-clinical-notes/healthscribe/input/*"
+          Action:
+          - "s3:GetObject"
+          Effect: "Allow"
+        - Resource: "arn:aws:s3:::aria-clinical-notes/*"
+          Action:
+          - "s3:PutObject"
+          Effect: "Allow"
+      Roles:
+      - "aria-healthscribe-role"
+      Users: []
+  IAMRoleAriawsdisconnectrolerq00y6zd:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::364046406796:policy/service-role/AWSLambdaBasicExecutionRole-f2bd9a66-a7c4-45a0-bd07-008f9a0acaf5"
+      MaxSessionDuration: 3600
+      RoleName: "aria-ws-disconnect-role-rq00y6zd"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "lambda.amazonaws.com"
+  LambdaFunctionAriaorchestrator:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Lambda::Function"
+    DeletionPolicy: "Retain"
+    Properties:
+      MemorySize: 128
+      Description: ""
+      TracingConfig:
+        Mode: "Active"
+      Timeout: 120
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: "Auto"
+      Handler: "lambda_function.lambda_handler"
+      Code:
+        SourceKMSKeyArn:
+          Ref: "LambdaFunctionAriaorchestratorCodeSourceKMSKeyArnYIAHz"
+        S3ObjectVersion:
+          Ref: "LambdaFunctionAriaorchestratorCodeS3ObjectVersionfxscV"
+        S3Bucket:
+          Ref: "LambdaFunctionAriaorchestratorCodeS3Bucket3JP56"
+        ZipFile:
+          Ref: "LambdaFunctionAriaorchestratorCodeZipFilezMl7G"
+        ImageUri:
+          Ref: "LambdaFunctionAriaorchestratorCodeImageUriPfZ5W"
+        S3Key:
+          Ref: "LambdaFunctionAriaorchestratorCodeS3KeyQeonV"
+      Role: "arn:aws:iam::364046406796:role/service-role/aria-orchestrator-role-ockglzks"
+      FileSystemConfigs: []
+      FunctionName: "aria-orchestrator"
+      Runtime: "python3.14"
+      PackageType: "Zip"
+      LoggingConfig:
+        LogFormat: "Text"
+        LogGroup: "/aws/lambda/aria-orchestrator"
+      RecursiveLoop: "Terminate"
+      Environment:
+        Variables:
+          HEALTHSCRIBE_BUCKET: "aria-clinical-notes"
+          HEALTHSCRIBE_ROLE_ARN: "arn:aws:iam::364046406796:role/aria-healthscribe-role"
+          TABLE_NAME: "aria-patient-records"
+          SNS_FN: "aria-sns-notify"
+          BEDROCK_MODEL_ID: "us.anthropic.claude-opus-4-1-20250805-v1:0"
+      EphemeralStorage:
+        Size: 512
+      Layers:
+      - "arn:aws:lambda:us-east-1:364046406796:layer:xray-layer:1"
+      Tags:
+      - Value: "no"
+        Key: "auto-delete"
+      Architectures:
+      - "x86_64"
+  IAMManagedPolicyPolicyserviceroleAWSLambdaTracerAccessExecutionRole9af35c2dae8f4442a40b16103ccea773:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AWSLambdaTracerAccessExecutionRole-9af35c2d-ae8f-4442-a40b-16103ccea773"
+      Path: "/service-role/"
+      Description: ""
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+          Effect: "Allow"
+      Roles:
+      - "aria-sns-notify-role-z61y9q3p"
+      Users: []
+  IAMManagedPolicyPolicyserviceroleAWSLambdaTracerAccessExecutionRolee7b44bb3317342fcac567294549c3f3a:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AWSLambdaTracerAccessExecutionRole-e7b44bb3-3173-42fc-ac56-7294549c3f3a"
+      Path: "/service-role/"
+      Description: ""
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "*"
+          Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+          Effect: "Allow"
+      Roles:
+      - "aria-orchestrator-role-ockglzks"
+      Users: []
+  LogsLogGroupAriacloudwatch:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Logs::LogGroup"
+    DeletionPolicy: "Retain"
+    Properties:
+      FieldIndexPolicies: []
+      LogGroupClass: "STANDARD"
+      LogGroupName: "aria-cloudwatch"
+      BearerTokenAuthenticationEnabled: false
+      DeletionProtectionEnabled: false
+      DataProtectionPolicy: {}
+  LambdaFunctionAriadocumenttextract:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Lambda::Function"
+    DeletionPolicy: "Retain"
+    Properties:
+      MemorySize: 128
+      Description: ""
+      TracingConfig:
+        Mode: "PassThrough"
+      Timeout: 60
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: "Auto"
+      Handler: "lambda_function.lambda_handler"
+      Code:
+        SourceKMSKeyArn:
+          Ref: "LambdaFunctionAriadocumenttextractCodeSourceKMSKeyArnuLDkx"
+        S3ObjectVersion:
+          Ref: "LambdaFunctionAriadocumenttextractCodeS3ObjectVersionrVQtO"
+        S3Bucket:
+          Ref: "LambdaFunctionAriadocumenttextractCodeS3BucketCl5ev"
+        ZipFile:
+          Ref: "LambdaFunctionAriadocumenttextractCodeZipFile96LVn"
+        ImageUri:
+          Ref: "LambdaFunctionAriadocumenttextractCodeImageUri1nxPK"
+        S3Key:
+          Ref: "LambdaFunctionAriadocumenttextractCodeS3KeyvRssM"
+      Role: "arn:aws:iam::364046406796:role/aria-s3-rekognition-function"
+      FileSystemConfigs: []
+      FunctionName: "aria-document-textract"
+      Runtime: "python3.14"
+      PackageType: "Zip"
+      LoggingConfig:
+        LogFormat: "Text"
+        LogGroup: "/aws/lambda/aria-document-textract"
+      RecursiveLoop: "Terminate"
+      EphemeralStorage:
+        Size: 512
+      Tags:
+      - Value: "no"
+        Key: "auto-delete"
+      Architectures:
+      - "x86_64"
+  LambdaPermissionFunctionariapatientidentification:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Lambda::Permission"
+    DeletionPolicy: "Retain"
+    Properties:
+      FunctionName: "arn:aws:lambda:us-east-1:364046406796:function:aria-patient-identification"
+      Action: "lambda:InvokeFunction"
+      SourceArn: "arn:aws:execute-api:us-east-1:364046406796:cytghce6w0/*/POST/identify"
+      Principal: "apigateway.amazonaws.com"
+  IAMManagedPolicyPolicyserviceroleAWSLambdaBasicExecutionRolef2bd9a66a7c445a0bd07008f9a0acaf5:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AWSLambdaBasicExecutionRole-f2bd9a66-a7c4-45a0-bd07-008f9a0acaf5"
+      Path: "/service-role/"
+      Description: ""
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "arn:aws:logs:us-east-1:364046406796:*"
+          Action: "logs:CreateLogGroup"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:logs:us-east-1:364046406796:log-group:/aws/lambda/aria-ws-disconnect:*"
+          Action:
+          - "logs:CreateLogStream"
+          - "logs:PutLogEvents"
+          Effect: "Allow"
+        - Resource: "*"
+          Action:
+          - "execute-api:ManageConnections"
+          - "dynamodb:GetItem"
+          - "dynamodb:PutItem"
+          - "dynamodb:DeleteItem"
+          - "dynamodb:Scan"
+          - "translate:TranslateText"
+          - "polly:SynthesizeSpeech"
+          - "s3:GetObject"
+          - "s3:PutObject"
+          Effect: "Allow"
+          Sid: "WebSocketPermissions"
+      Roles:
+      - "aria-ws-disconnect-role-rq00y6zd"
+      Users: []
+  LambdaPermissionFunctionariawsdisconnect:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Lambda::Permission"
+    DeletionPolicy: "Retain"
+    Properties:
+      FunctionName: "arn:aws:lambda:us-east-1:364046406796:function:aria-ws-disconnect"
+      Action: "lambda:InvokeFunction"
+      SourceArn: "arn:aws:execute-api:us-east-1:364046406796:8ko3wl8l0c/*/$disconnect"
+      Principal: "apigateway.amazonaws.com"
+  ApiGatewayDeploymentEV:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "cytghce6w0"
+  IAMRoleAriahealthscriberole:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::364046406796:policy/aria-healthscribe-policy"
+      MaxSessionDuration: 3600
+      RoleName: "aria-healthscribe-role"
+      Description: "Allows S3 to call AWS services on your behalf."
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "s3.amazonaws.com"
+  ApiGatewayResourceHE:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Resource"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "cytghce6w0"
+  LambdaPermissionFunctionariawsmessage:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Lambda::Permission"
+    DeletionPolicy: "Retain"
+    Properties:
+      FunctionName: "arn:aws:lambda:us-east-1:364046406796:function:aria-ws-message"
+      Action: "lambda:InvokeFunction"
+      SourceArn: "arn:aws:execute-api:us-east-1:364046406796:8ko3wl8l0c/*/sendMessage"
+      Principal: "apigateway.amazonaws.com"
+  LambdaEventSourceMapping:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Lambda::EventSourceMapping"
+    DeletionPolicy: "Retain"
+    Properties:
+      StartingPosition: "LATEST"
+      BatchSize: 1
+      MaximumRetryAttempts: -1
+      ParallelizationFactor: 1
+      Enabled: true
+      EventSourceArn: "arn:aws:dynamodb:us-east-1:364046406796:table/aria-patient-records/stream/2026-06-25T04:30:43.016"
+      MetricsConfig:
+        Metrics: []
+      FunctionName: "arn:aws:lambda:us-east-1:364046406796:function:aria-orchestrator"
+      TumblingWindowInSeconds: 0
+      BisectBatchOnFunctionError: false
+      MaximumRecordAgeInSeconds: -1
+      Tags: []
+      MaximumBatchingWindowInSeconds: 0
+  ApiGatewayRestApi:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::RestApi"
+    DeletionPolicy: "Retain"
+    Properties:
+      ApiKeySourceType: "HEADER"
+      Description: "API for ARIA patient identification system"
+      EndpointConfiguration:
+        IpAddressType: "ipv4"
+        Types:
+        - "REGIONAL"
+      DisableExecuteApiEndpoint: false
+      SecurityPolicy: "TLS_1_0"
+      Name: "aria-patient-api"
+  ApiGatewayModelGO:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Model"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "cytghce6w0"
+      Description: "This is a default error schema model"
+      ContentType: "application/json"
+      Schema:
+        $schema: "http://json-schema.org/draft-04/schema#"
+        title: "Error Schema"
+        type: "object"
+        properties:
+          message:
+            type: "string"
+      Name: "Error"
+  CloudFrontCachePolicy:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::CloudFront::CachePolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      CachePolicyConfig:
+        Comment: "Policy with caching enabled. Supports Gzip and Brotli compression."
+        MinTTL: 1
+        MaxTTL: 3.1536E7
+        ParametersInCacheKeyAndForwardedToOrigin:
+          QueryStringsConfig:
+            QueryStringBehavior: "none"
+          EnableAcceptEncodingBrotli: true
+          HeadersConfig:
+            HeaderBehavior: "none"
+          CookiesConfig:
+            CookieBehavior: "none"
+          EnableAcceptEncodingGzip: true
+        DefaultTTL: 86400
+        Name: "Managed-CachingOptimized"
+  IAMRoleAriawsmessagerolepkzse82x:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::364046406796:policy/service-role/AWSLambdaBasicExecutionRole-fae85c0f-dd2e-4b36-8699-4749eb0c6732"
+      MaxSessionDuration: 3600
+      RoleName: "aria-ws-message-role-pkzse82x"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "lambda.amazonaws.com"
+  IAMManagedPolicyPolicyserviceroleAWSLambdaBasicExecutionRolefb2816b2b5c94e5892ac8c540e9d8abb:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AWSLambdaBasicExecutionRole-fb2816b2-b5c9-4e58-92ac-8c540e9d8abb"
+      Path: "/service-role/"
+      Description: ""
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "arn:aws:logs:us-east-1:364046406796:*"
+          Action: "logs:CreateLogGroup"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:logs:us-east-1:364046406796:log-group:/aws/lambda/aria-ws-connect:*"
+          Action:
+          - "logs:CreateLogStream"
+          - "logs:PutLogEvents"
+          Effect: "Allow"
+        - Resource: "*"
+          Action:
+          - "execute-api:ManageConnections"
+          - "dynamodb:GetItem"
+          - "dynamodb:PutItem"
+          - "dynamodb:DeleteItem"
+          - "dynamodb:Scan"
+          - "translate:TranslateText"
+          - "polly:SynthesizeSpeech"
+          - "s3:GetObject"
+          - "s3:PutObject"
+          Effect: "Allow"
+          Sid: "WebSocketPermissions"
+      Roles:
+      - "aria-ws-connect-role-7l3tohvd"
+      Users: []
+  LambdaFunctionAriawsdisconnect:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Lambda::Function"
+    DeletionPolicy: "Retain"
+    Properties:
+      MemorySize: 128
+      Description: ""
+      TracingConfig:
+        Mode: "PassThrough"
+      Timeout: 3
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: "Auto"
+      Handler: "lambda_function.lambda_handler"
+      Code:
+        SourceKMSKeyArn:
+          Ref: "LambdaFunctionAriawsdisconnectCodeSourceKMSKeyArn22zHD"
+        S3ObjectVersion:
+          Ref: "LambdaFunctionAriawsdisconnectCodeS3ObjectVersiondCXUD"
+        S3Bucket:
+          Ref: "LambdaFunctionAriawsdisconnectCodeS3BucketLnLHS"
+        ZipFile:
+          Ref: "LambdaFunctionAriawsdisconnectCodeZipFileevgr6"
+        ImageUri:
+          Ref: "LambdaFunctionAriawsdisconnectCodeImageUri2SLtw"
+        S3Key:
+          Ref: "LambdaFunctionAriawsdisconnectCodeS3KeyuxfLf"
+      Role: "arn:aws:iam::364046406796:role/service-role/aria-ws-disconnect-role-rq00y6zd"
+      FileSystemConfigs: []
+      FunctionName: "aria-ws-disconnect"
+      Runtime: "python3.14"
+      PackageType: "Zip"
+      LoggingConfig:
+        LogFormat: "Text"
+        LogGroup: "/aws/lambda/aria-ws-disconnect"
+      RecursiveLoop: "Terminate"
+      Environment:
+        Variables:
+          CONNECTIONS_TABLE: "aria-ws-connect"
+      EphemeralStorage:
+        Size: 512
+      Architectures:
+      - "x86_64"
+  LambdaFunctionAriapatientidentification:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Lambda::Function"
+    DeletionPolicy: "Retain"
+    Properties:
+      MemorySize: 128
+      Description: ""
+      TracingConfig:
+        Mode: "PassThrough"
+      Timeout: 120
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: "Auto"
+      Handler: "lambda_function.lambda_handler"
+      Code:
+        SourceKMSKeyArn:
+          Ref: "LambdaFunctionAriapatientidentificationCodeSourceKMSKeyArnoKdEB"
+        S3ObjectVersion:
+          Ref: "LambdaFunctionAriapatientidentificationCodeS3ObjectVersionJA0F8"
+        S3Bucket:
+          Ref: "LambdaFunctionAriapatientidentificationCodeS3BucketwNs4N"
+        ZipFile:
+          Ref: "LambdaFunctionAriapatientidentificationCodeZipFile1eoJF"
+        ImageUri:
+          Ref: "LambdaFunctionAriapatientidentificationCodeImageUrij3VI4"
+        S3Key:
+          Ref: "LambdaFunctionAriapatientidentificationCodeS3KeyDQEoL"
+      Role: "arn:aws:iam::364046406796:role/aria-s3-rekognition-function"
+      FileSystemConfigs: []
+      FunctionName: "aria-patient-identification"
+      Runtime: "python3.14"
+      PackageType: "Zip"
+      LoggingConfig:
+        LogFormat: "Text"
+        LogGroup: "/aws/lambda/aria-patient-identification"
+      RecursiveLoop: "Terminate"
+      EphemeralStorage:
+        Size: 512
+      Tags:
+      - Value: "no"
+        Key: "auto-delete"
+      Architectures:
+      - "x86_64"
+  IAMRoleArias3rekognitionfunction:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/AmazonTranscribeFullAccess"
+      - "arn:aws:iam::aws:policy/TranslateFullAccess"
+      - "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+      - "arn:aws:iam::aws:policy/AmazonTextractFullAccess"
+      - "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+      - "arn:aws:iam::aws:policy/CloudWatchLogsFullAccess"
+      - "arn:aws:iam::aws:policy/AmazonPollyFullAccess"
+      - "arn:aws:iam::aws:policy/AmazonRekognitionFullAccess"
+      MaxSessionDuration: 3600
+      RoleName: "aria-s3-rekognition-function"
+      Description: "Allows Lambda functions to work with Rekognition for patient facial\
+        \ analysis."
+      Policies:
+      - PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Resource: "*"
+            Action: "lambda:*"
+            Effect: "Allow"
+            Sid: "VisualEditor0"
+        PolicyName: "lambdaInvocationPolicy"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "lambda.amazonaws.com"
+      Tags:
+      - Value: "no"
+        Key: "auto-delete"
+  LexBot:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Lex::Bot"
+    DeletionPolicy: "Retain"
+    Properties:
+      Description: "Voice-first conversational layer for patient navigation at Mothobi\
+        \ Healthcar"
+      ErrorLogSettings:
+        Enabled: false
+      IdleSessionTTLInSeconds: 300
+      RoleArn: "arn:aws:iam::364046406796:role/aws-service-role/lexv2.amazonaws.com/AWSServiceRoleForLexV2Bots_CBB8G3KPE5"
+      Name: "ARIA-PatientInterface"
+      DataPrivacy:
+        ChildDirected: false
+      BotTags:
+      - Value: "no"
+        Key: "auto-delete"
+  ApiGatewayDeploymentIt:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "cytghce6w0"
+  ApiGatewayV2IntegrationID:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGatewayV2::Integration"
+    DeletionPolicy: "Retain"
+    Properties:
+      IntegrationUri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:364046406796:function:aria-ws-message/invocations"
+      PayloadFormatVersion: "1.0"
+      ConnectionType: "INTERNET"
+      RequestTemplates: {}
+      ResponseParameters: {}
+      TimeoutInMillis: 29000
+      ApiId: "8ko3wl8l0c"
+      IntegrationMethod: "POST"
+      IntegrationType: "AWS_PROXY"
+      PassthroughBehavior: "WHEN_NO_MATCH"
+  IAMManagedPolicyPolicyserviceroleAWSLambdaBasicExecutionRolee1d62736883f4e4b94abeeb58868a742:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AWSLambdaBasicExecutionRole-e1d62736-883f-4e4b-94ab-eeb58868a742"
+      Path: "/service-role/"
+      Description: ""
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "arn:aws:logs:us-east-1:364046406796:*"
+          Action: "logs:CreateLogGroup"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:logs:us-east-1:364046406796:log-group:/aws/lambda/aria-sns-notify:*"
+          Action:
+          - "logs:CreateLogStream"
+          - "logs:PutLogEvents"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:sns:us-east-1:364046406796:project-aria-doctor-notificationsfifo"
+          Action:
+          - "sns:Publish"
+          Effect: "Allow"
+          Sid: "Statement1"
+        - Resource: "*"
+          Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+          Effect: "Allow"
+          Sid: "XRayAccess"
+      Roles:
+      - "aria-sns-notify-role-z61y9q3p"
+      Users: []
+  LambdaPermissionFunctionariawsconnect:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Lambda::Permission"
+    DeletionPolicy: "Retain"
+    Properties:
+      FunctionName: "arn:aws:lambda:us-east-1:364046406796:function:aria-ws-connect"
+      Action: "lambda:InvokeFunction"
+      SourceArn: "arn:aws:execute-api:us-east-1:364046406796:8ko3wl8l0c/*/$connect"
+      Principal: "apigateway.amazonaws.com"
+  ApiGatewayDeployment:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "cytghce6w0"
+  ApiGatewayDeploymentAF:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "cytghce6w0"
+  ApiGatewayV2Api:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGatewayV2::Api"
+    DeletionPolicy: "Retain"
+    Properties:
+      IpAddressType: "ipv4"
+      RouteSelectionExpression: "$request.body.action"
+      ProtocolType: "WEBSOCKET"
+      DisableExecuteApiEndpoint: false
+      Tags: {}
+      Name: "aria-ws-api"
+      ApiKeySelectionExpression: "$request.header.x-api-key"
+  S3BucketAriaregistrations:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: "Retain"
+    Properties:
+      AbacStatus: "Disabled"
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        BlockPublicAcls: true
+      BucketName: "aria-registrations"
+      OwnershipControls:
+        Rules:
+        - ObjectOwnership: "BucketOwnerEnforced"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - BucketKeyEnabled: true
+          BlockedEncryptionTypes:
+            EncryptionType:
+            - "SSE-C"
+          ServerSideEncryptionByDefault:
+            SSEAlgorithm: "AES256"
+      VersioningConfiguration:
+        Status: "Enabled"
+      Tags:
+      - Value: "no"
+        Key: "auto-delete"
+  ApiGatewayStageDemo:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Stage"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "cytghce6w0"
+      DeploymentId: "6x09u8"
+      StageName: "demo"
+      CacheClusterSize: "0.5"
+      TracingEnabled: false
+      CacheClusterEnabled: false
+  ApiGatewayV2Route:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGatewayV2::Route"
+    DeletionPolicy: "Retain"
+    Properties:
+      Target: "integrations/3b7rqwn"
+      RequestModels: {}
+      AuthorizationScopes: []
+      ApiKeyRequired: false
+      RouteKey: "$connect"
+      AuthorizationType: "NONE"
+      ApiId: "8ko3wl8l0c"
+  ApiGatewayV2Integration:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGatewayV2::Integration"
+    DeletionPolicy: "Retain"
+    Properties:
+      IntegrationUri: "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:364046406796:function:aria-ws-connect/invocations"
+      PayloadFormatVersion: "1.0"
+      ConnectionType: "INTERNET"
+      RequestTemplates: {}
+      ResponseParameters: {}
+      TimeoutInMillis: 29000
+      ApiId: "8ko3wl8l0c"
+      IntegrationMethod: "POST"
+      IntegrationType: "AWS_PROXY"
+      PassthroughBehavior: "WHEN_NO_MATCH"
+  IAMRoleAriateambuildrole:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::364046406796:policy/aria-project-permissions"
+      MaxSessionDuration: 43200
+      RoleName: "aria-team-build-role"
+      Description: "Team indomitables"
+      Policies:
+      - PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Resource: "*"
+            Action: "cloudformation:*"
+            Effect: "Allow"
+            Sid: "VisualEditor0"
+        PolicyName: "cloudformationaccess"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            AWS:
+            - "arn:aws:iam::253170388605:root"
+            - "arn:aws:iam::560167828817:root"
+          Sid: "Statement1"
+      Tags:
+      - Value: "no"
+        Key: "auto-delete"
+  IAMManagedPolicyPolicyariaprojectpermissions:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "aria-project-permissions"
+      Path: "/"
+      Description: "Project permissions for Assa and Lilian for Project Aria"
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource:
+          - "*"
+          - "*"
+          Action:
+          - "lex:*"
+          - "apigateway:*"
+          Effect: "Allow"
+          Sid: "LexFullAccess"
+        - Resource: "*"
+          Action:
+          - "lambda:*"
+          Effect: "Allow"
+          Sid: "LambdaFullAccess"
+        - Resource: "*"
+          Action:
+          - "bedrock:*"
+          Effect: "Allow"
+          Sid: "BedrockAccess"
+        - Resource: "*"
+          Action:
+          - "polly:*"
+          Effect: "Allow"
+          Sid: "PollyAccess"
+        - Resource: "*"
+          Action:
+          - "translate:*"
+          Effect: "Allow"
+          Sid: "TranslateAccess"
+        - Resource: "*"
+          Action:
+          - "transcribe:*"
+          Effect: "Allow"
+          Sid: "TranscribeAccess"
+        - Resource: "*"
+          Action:
+          - "rekognition:*"
+          Effect: "Allow"
+          Sid: "RekognitionAccess"
+        - Resource: "*"
+          Action:
+          - "textract:*"
+          Effect: "Allow"
+          Sid: "TextractAccess"
+        - Resource: "arn:aws:dynamodb:*:*:table/*"
+          Action:
+          - "dynamodb:*"
+          Effect: "Allow"
+          Sid: "DynamoDBAccess"
+        - Resource:
+          - "*"
+          Action:
+          - "s3:*"
+          Effect: "Allow"
+          Sid: "S3Access"
+        - Resource: "*"
+          Action:
+          - "sns:*"
+          Effect: "Allow"
+          Sid: "SNSAccess"
+        - Resource: "arn:aws:iam::*:role/aria-*"
+          Action:
+          - "iam:PassRole"
+          Effect: "Allow"
+          Sid: "IAMPassRole"
+        - Resource: "*"
+          Action:
+          - "logs:*"
+          Effect: "Allow"
+          Sid: "CloudWatchLogs"
+        - Resource: "*"
+          Action:
+          - "comprehendmedical:*"
+          Effect: "Allow"
+          Sid: "ComprehendMedical"
+        - Resource:
+          - "*"
+          Action:
+          - "iam:*"
+          Effect: "Allow"
+          Sid: "IAMPermissions"
+        - Resource:
+          - "*"
+          Action:
+          - "cloudfront:*"
+          Effect: "Allow"
+          Sid: "Cloudfront"
+      Roles:
+      - "aria-team-build-role"
+      Users: []
+  LambdaPermissionFunctionariaorchestrator:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Lambda::Permission"
+    DeletionPolicy: "Retain"
+    Properties:
+      FunctionName: "arn:aws:lambda:us-east-1:364046406796:function:aria-orchestrator"
+      Action: "lambda:invokeFunction"
+      SourceArn: "arn:aws:lex:us-east-1:364046406796:bot-alias/DQVGWNK637/TSTALIASID"
+      Principal: "lexv2.amazonaws.com"
+      SourceAccount: "364046406796"
+  ApiGatewayModel:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Model"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "cytghce6w0"
+      Description: "This is a default empty schema model"
+      ContentType: "application/json"
+      Schema:
+        $schema: "http://json-schema.org/draft-04/schema#"
+        title: "Empty Schema"
+        type: "object"
+      Name: "Empty"
+  ApiGatewayV2RouteTJ:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGatewayV2::Route"
+    DeletionPolicy: "Retain"
+    Properties:
+      Target: "integrations/jche6kv"
+      RequestModels: {}
+      AuthorizationScopes: []
+      ApiKeyRequired: false
+      RouteKey: "$disconnect"
+      AuthorizationType: "NONE"
+      ApiId: "8ko3wl8l0c"
+  CloudFrontDistribution:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::CloudFront::Distribution"
+    DeletionPolicy: "Retain"
+    Properties:
+      DistributionConfig:
+        Logging:
+          IncludeCookies: false
+          Bucket: ""
+          Prefix: ""
+        Comment: ""
+        DefaultRootObject: "index.html"
+        Origins:
+        - ConnectionTimeout: 10
+          OriginAccessControlId: "E1GTXNTOV9EKZ2"
+          ConnectionAttempts: 3
+          OriginCustomHeaders: []
+          DomainName: "aria-patient-app.s3.us-east-1.amazonaws.com"
+          OriginShield:
+            Enabled: false
+          S3OriginConfig:
+            OriginReadTimeout: 30
+            OriginAccessIdentity: ""
+          OriginPath: ""
+          Id: "aria-patient-app.s3.us-east-1.amazonaws.com-mqqni8g9ajq"
+        ViewerCertificate:
+          MinimumProtocolVersion: "TLSv1"
+          SslSupportMethod: "vip"
+          CloudFrontDefaultCertificate: true
+        PriceClass: "PriceClass_All"
+        DefaultCacheBehavior:
+          Compress: true
+          FunctionAssociations: []
+          LambdaFunctionAssociations: []
+          TargetOriginId: "aria-patient-app.s3.us-east-1.amazonaws.com-mqqni8g9ajq"
+          ViewerProtocolPolicy: "redirect-to-https"
+          GrpcConfig:
+            Enabled: false
+          TrustedSigners: []
+          FieldLevelEncryptionId: ""
+          TrustedKeyGroups: []
+          AllowedMethods:
+          - "HEAD"
+          - "GET"
+          CachedMethods:
+          - "HEAD"
+          - "GET"
+          SmoothStreaming: false
+          CachePolicyId: "658327ea-f89d-4fab-a63d-7e88639e58f6"
+        Staging: false
+        CustomErrorResponses: []
+        ContinuousDeploymentPolicyId: ""
+        OriginGroups:
+          Quantity: 0
+          Items: []
+        Enabled: true
+        Aliases: []
+        IPV6Enabled: true
+        WebACLId: ""
+        HttpVersion: "http2"
+        Restrictions:
+          GeoRestriction:
+            Locations: []
+            RestrictionType: "none"
+        CacheBehaviors: []
+      Tags:
+      - Value: "no"
+        Key: "auto-delete"
+      - Value: "aria-distribution"
+        Key: "Name"
+  ApiGatewayV2Deployment:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGatewayV2::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      ApiId: "8ko3wl8l0c"
+      Description: "This first deployment was created by the console during Create\
+        \ API."
+  ApiGatewayV2RouteOl:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGatewayV2::Route"
+    DeletionPolicy: "Retain"
+    Properties:
+      Target: "integrations/kmblbb8"
+      RequestModels: {}
+      AuthorizationScopes: []
+      ApiKeyRequired: false
+      RouteKey: "sendMessage"
+      AuthorizationType: "NONE"
+      ApiId: "8ko3wl8l0c"
+  LexBotAlias:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Lex::BotAlias"
+    DeletionPolicy: "Retain"
+    Properties:
+      BotVersion: "DRAFT"
+      Description: "test bot alias"
+      BotId: "DQVGWNK637"
+      BotAliasLocaleSettings:
+      - BotAliasLocaleSetting:
+          CodeHookSpecification:
+            LambdaCodeHook:
+              LambdaArn: "arn:aws:lambda:us-east-1:364046406796:function:aria-orchestrator"
+              CodeHookInterfaceVersion: "1.0"
+          Enabled: true
+        LocaleId: "en_US"
+      ConversationLogSettings:
+        TextLogSettings: []
+        AudioLogSettings:
+        - Destination:
+            S3Bucket:
+              LogPrefix: "aws/lex/DQVGWNK637/TSTALIASID/DRAFT/"
+              S3BucketArn: "arn:aws:s3:::aria-patient-data-23062026"
+          Enabled: true
+      BotAliasName: "TestBotAlias"
+      BotAliasTags: []
+  DynamoDBTableAriawsconnections:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::DynamoDB::Table"
+    DeletionPolicy: "Retain"
+    Properties:
+      SSESpecification:
+        SSEEnabled: false
+      TableName: "aria-ws-connections"
+      AttributeDefinitions:
+      - AttributeType: "S"
+        AttributeName: "connectionId"
+      ContributorInsightsSpecification:
+        Enabled: false
+      BillingMode: "PAY_PER_REQUEST"
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: false
+      WarmThroughput:
+        ReadUnitsPerSecond: 12000
+        WriteUnitsPerSecond: 4000
+      KeySchema:
+      - KeyType: "HASH"
+        AttributeName: "connectionId"
+      DeletionProtectionEnabled: false
+      TableClass: "STANDARD"
+      Tags:
+      - Value: "no"
+        Key: "auto-delete"
+      TimeToLiveSpecification:
+        Enabled: false
+  DynamoDBTableAriapatientrecords:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::DynamoDB::Table"
+    DeletionPolicy: "Retain"
+    Properties:
+      SSESpecification:
+        SSEEnabled: false
+      StreamSpecification:
+        StreamViewType: "NEW_AND_OLD_IMAGES"
+      ContributorInsightsSpecification:
+        Enabled: false
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: false
+      WarmThroughput:
+        ReadUnitsPerSecond: 12000
+        WriteUnitsPerSecond: 4000
+      TableName: "aria-patient-records"
+      AttributeDefinitions:
+      - AttributeType: "S"
+        AttributeName: "patient_id"
+      BillingMode: "PAY_PER_REQUEST"
+      KeySchema:
+      - KeyType: "HASH"
+        AttributeName: "patient_id"
+      DeletionProtectionEnabled: false
+      TableClass: "STANDARD"
+      Tags:
+      - Value: "no"
+        Key: "auto-delete"
+      TimeToLiveSpecification:
+        Enabled: false
+  IAMRoleAWSServiceRoleForLexV2BotsCBB8G3KPE5:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/aws-service-role/lexv2.amazonaws.com/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::aws:policy/aws-service-role/AmazonLexV2BotPolicy"
+      MaxSessionDuration: 3600
+      RoleName: "AWSServiceRoleForLexV2Bots_CBB8G3KPE5"
+      Policies:
+      - PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Resource:
+            - "arn:aws:s3:::aria-patient-data-23062026/*"
+            Action: "s3:PutObject"
+            Effect: "Allow"
+        PolicyName: "AmazonLexServicePolicy-CBB8G3KPE5-S3Policy"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "lexv2.amazonaws.com"
+  IAMRoleAriasnsnotifyrolez61y9q3p:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::364046406796:policy/service-role/AWSLambdaBasicExecutionRole-e1d62736-883f-4e4b-94ab-eeb58868a742"
+      - "arn:aws:iam::364046406796:policy/service-role/AWSLambdaTracerAccessExecutionRole-9af35c2d-ae8f-4442-a40b-16103ccea773"
+      MaxSessionDuration: 3600
+      RoleName: "aria-sns-notify-role-z61y9q3p"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "lambda.amazonaws.com"
+  ApiGatewayV2DeploymentAj:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGatewayV2::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      ApiId: "8ko3wl8l0c"
+  IAMRoleAriaorchestratorroleockglzks:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::364046406796:policy/service-role/AWSLambdaTracerAccessExecutionRole-e7b44bb3-3173-42fc-ac56-7294549c3f3a"
+      - "arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess"
+      - "arn:aws:iam::364046406796:policy/service-role/AWSLambdaBasicExecutionRole-be2d5a81-4368-4623-8f33-0aa3e04e3691"
+      MaxSessionDuration: 3600
+      RoleName: "aria-orchestrator-role-ockglzks"
+      Policies:
+      - PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Resource: "*"
+            Action:
+            - "comprehendmedical:DetectEntitiesV2"
+            - "lambda:*"
+            - "transcribe:StartMedicalScribeJob"
+            - "transcribe:StartMedicalScribeStream"
+            - "transcribe:StartMedicalStreamTranscription"
+            - "transcribe:StartMedicalStreamTranscriptionWebSocket"
+            - "transcribe:StartMedicalTranscriptionJob"
+            - "transcribe:GetMedicalScribeJob"
+            - "transcribe:GetMedicalScribeStream"
+            - "transcribe:GetMedicalTranscriptionJob"
+            - "transcribe:GetMedicalVocabulary"
+            - "polly:SynthesizeSpeech"
+            - "s3:GetObject"
+            - "s3:PutObject"
+            - "iam:PassRole"
+            Effect: "Allow"
+        PolicyName: "aria-orchestrator-permissions"
+      - PolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+          - Resource: "*"
+            Action:
+            - "bedrock:InvokeModel"
+            - "bedrock:InvokeModelWithResponseStream"
+            Effect: "Allow"
+            Sid: "VisualEditor0"
+        PolicyName: "bedrockInvokeModelPolicy"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "lambda.amazonaws.com"
+  IAMRoleAriawsconnectrole7l3tohvd:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::Role"
+    DeletionPolicy: "Retain"
+    Properties:
+      Path: "/service-role/"
+      ManagedPolicyArns:
+      - "arn:aws:iam::364046406796:policy/service-role/AWSLambdaBasicExecutionRole-fb2816b2-b5c9-4e58-92ac-8c540e9d8abb"
+      MaxSessionDuration: 3600
+      RoleName: "aria-ws-connect-role-7l3tohvd"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Action: "sts:AssumeRole"
+          Effect: "Allow"
+          Principal:
+            Service: "lambda.amazonaws.com"
+  ApiGatewayDeploymentOu:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "cytghce6w0"
+  IAMManagedPolicyPolicyserviceroleAWSLambdaBasicExecutionRolefae85c0fdd2e4b3686994749eb0c6732:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AWSLambdaBasicExecutionRole-fae85c0f-dd2e-4b36-8699-4749eb0c6732"
+      Path: "/service-role/"
+      Description: ""
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "arn:aws:logs:us-east-1:364046406796:*"
+          Action: "logs:CreateLogGroup"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:logs:us-east-1:364046406796:log-group:/aws/lambda/aria-ws-message:*"
+          Action:
+          - "logs:CreateLogStream"
+          - "logs:PutLogEvents"
+          Effect: "Allow"
+        - Resource: "*"
+          Action:
+          - "execute-api:ManageConnections"
+          - "dynamodb:GetItem"
+          - "dynamodb:PutItem"
+          - "dynamodb:DeleteItem"
+          - "dynamodb:Scan"
+          - "translate:TranslateText"
+          - "polly:SynthesizeSpeech"
+          - "s3:GetObject"
+          - "s3:PutObject"
+          Effect: "Allow"
+          Sid: "WebSocketPermissions"
+      Roles:
+      - "aria-ws-message-role-pkzse82x"
+      Users: []
+  LambdaFunctionAriawsconnect:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Lambda::Function"
+    DeletionPolicy: "Retain"
+    Properties:
+      MemorySize: 128
+      Description: ""
+      TracingConfig:
+        Mode: "PassThrough"
+      Timeout: 3
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: "Auto"
+      Handler: "lambda_function.lambda_handler"
+      Code:
+        SourceKMSKeyArn:
+          Ref: "LambdaFunctionAriawsconnectCodeSourceKMSKeyArnVofFF"
+        S3ObjectVersion:
+          Ref: "LambdaFunctionAriawsconnectCodeS3ObjectVersionCVAgw"
+        S3Bucket:
+          Ref: "LambdaFunctionAriawsconnectCodeS3Bucketz8VpU"
+        ZipFile:
+          Ref: "LambdaFunctionAriawsconnectCodeZipFileFuCG6"
+        ImageUri:
+          Ref: "LambdaFunctionAriawsconnectCodeImageUri87BBW"
+        S3Key:
+          Ref: "LambdaFunctionAriawsconnectCodeS3KeyUiesd"
+      Role: "arn:aws:iam::364046406796:role/service-role/aria-ws-connect-role-7l3tohvd"
+      FileSystemConfigs: []
+      FunctionName: "aria-ws-connect"
+      Runtime: "python3.14"
+      PackageType: "Zip"
+      LoggingConfig:
+        LogFormat: "Text"
+        LogGroup: "/aws/lambda/aria-ws-connect"
+      RecursiveLoop: "Terminate"
+      Environment:
+        Variables:
+          CONNECTIONS_TABLE: "aria-ws-connections"
+      EphemeralStorage:
+        Size: 512
+      Architectures:
+      - "x86_64"
+  ApiGatewayV2DeploymentRM:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGatewayV2::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      ApiId: "8ko3wl8l0c"
+  CloudFrontOriginAccessControl:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::CloudFront::OriginAccessControl"
+    DeletionPolicy: "Retain"
+    Properties:
+      OriginAccessControlConfig:
+        SigningBehavior: "always"
+        Description: ""
+        SigningProtocol: "sigv4"
+        OriginAccessControlOriginType: "s3"
+        Name: "aria-cloudfront-s3-oac"
+  RekognitionCollection:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::Rekognition::Collection"
+    DeletionPolicy: "Retain"
+    Properties:
+      CollectionId: "aria-patient-faces"
+      Tags: []
+  IAMManagedPolicyPolicyserviceroleAWSLambdaBasicExecutionRolebe2d5a81436846238f330aa3e04e3691:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::IAM::ManagedPolicy"
+    DeletionPolicy: "Retain"
+    Properties:
+      ManagedPolicyName: "AWSLambdaBasicExecutionRole-be2d5a81-4368-4623-8f33-0aa3e04e3691"
+      Path: "/service-role/"
+      Description: ""
+      Groups: []
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+        - Resource: "arn:aws:logs:us-east-1:364046406796:*"
+          Action: "logs:CreateLogGroup"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:logs:us-east-1:364046406796:log-group:/aws/lambda/aria-orchestrator:*"
+          Action:
+          - "logs:CreateLogStream"
+          - "logs:PutLogEvents"
+          Effect: "Allow"
+        - Resource:
+          - "arn:aws:dynamodb:us-east-1:364046406796:table/aria-patient-records"
+          Action:
+          - "dynamodb:GetItem"
+          Effect: "Allow"
+          Sid: "Statement1"
+        - Resource: "*"
+          Action:
+          - "xray:PutTraceSegments"
+          - "xray:PutTelemetryRecords"
+          Effect: "Allow"
+          Sid: "XRayAccess"
+      Roles:
+      - "aria-orchestrator-role-ockglzks"
+      Users: []
+  ApiGatewayDeploymentKu:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::ApiGateway::Deployment"
+    DeletionPolicy: "Retain"
+    Properties:
+      RestApiId: "cytghce6w0"
+  S3BucketAriaclinicalnotes:
+    UpdateReplacePolicy: "Retain"
+    Type: "AWS::S3::Bucket"
+    DeletionPolicy: "Retain"
+    Properties:
+      AbacStatus: "Disabled"
+      PublicAccessBlockConfiguration:
+        RestrictPublicBuckets: true
+        IgnorePublicAcls: true
+        BlockPublicPolicy: true
+        BlockPublicAcls: true
+      BucketName: "aria-clinical-notes"
+      OwnershipControls:
+        Rules:
+        - ObjectOwnership: "BucketOwnerEnforced"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+        - BucketKeyEnabled: true
+          BlockedEncryptionTypes:
+            EncryptionType:
+            - "SSE-C"
+          ServerSideEncryptionByDefault:
+            SSEAlgorithm: "AES256"
