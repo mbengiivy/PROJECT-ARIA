@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>ARIA Patient Check-In</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+body {
+font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+background-color: #F2E6D0;
+background-image:
+/* Bold zigzag band - top */
+repeating-linear-gradient(
+135deg,
+transparent 0px,
+transparent 10px,
+rgba(232, 102, 27, 0.08) 10px,
+rgba(232, 102, 27, 0.08) 12px
+),
+repeating-linear-gradient(
+45deg,
+transparent 0px,
+transparent 10px,
+rgba(139, 26, 26, 0.06) 10px,
+rgba(139, 26, 26, 0.06) 12px
+),
+/* Triangle grid pattern */
+linear-gradient(60deg, rgba(26, 26, 26, 0.03) 25%, transparent 25%),
+linear-gradient(-60deg, rgba(26, 26, 26, 0.03) 25%, transparent 25%),
+linear-gradient(60deg, transparent 75%, rgba(26, 26, 26, 0.03) 75%),
+linear-gradient(-60deg, transparent 75%, rgba(26, 26, 26, 0.03) 75%);
+background-size: 20px 20px, 20px 20px, 40px 70px, 40px 70px, 40px 70px, 40px 70px;
+min-height: 100vh;
+padding: 16px;
+color: #1a1a1a;
+}
+.header {
+text-align: center;
+padding: 20px 16px;
+background: linear-gradient(135deg, #E8661B 0%, #8B1A1A 50%, #1a1a1a 100%);
+border-radius: 14px;
+margin-bottom: 16px;
+box-shadow: 0 6px 24px rgba(139, 26, 26, 0.35);
+position: relative;
+overflow: hidden;
+}
+/* Bold tribal zigzag border - top */
+.header::before {
+content: '';
+position: absolute;
+top: 0;
+left: 0;
+right: 0;
+height: 8px;
+background: repeating-linear-gradient(
+90deg,
+#F5DEB3 0px, #F5DEB3 10px,
+#E8661B 10px, #E8661B 20px,
+#1a1a1a 20px, #1a1a1a 30px,
+#8B1A1A 30px, #8B1A1A 40px,
+#6B5B00 40px, #6B5B00 50px
+);
+}
+/* Bold tribal zigzag border - bottom */
+.header::after {
+content: '';
+position: absolute;
+bottom: 0;
+left: 0;
+right: 0;
+height: 8px;
+background:
+repeating-linear-gradient(
+90deg,
+#6B5B00 0px, #6B5B00 10px,
+#8B1A1A 10px, #8B1A1A 20px,
+#1a1a1a 20px, #1a1a1a 30px,
+#E8661B 30px, #E8661B 40px,
+#F5DEB3 40px, #F5DEB3 50px
+);
+}
+.header h1 {
+color: #F5DEB3;
+font-size: 22px;
+font-weight: 700;
+letter-spacing: 1px;
+text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+}
+.header p {
+color: rgba(245, 222, 179, 0.85);
+font-size: 13px;
+margin-top: 4px;
+}
+.lang-bar {
+display: flex;
+justify-content: center;
+gap: 6px;
+margin: 12px 0;
+flex-wrap: wrap;
+}
+.lang-btn {
+padding: 8px 14px;
+border: 2px solid #8B1A1A;
+background: #F5DEB3;
+color: #8B1A1A;
+border-radius: 20px;
+font-size: 13px;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+box-shadow: 0 2px 8px rgba(139, 26, 26, 0.1);
+}
+.lang-btn:hover, .lang-btn.active {
+background: #8B1A1A;
+color: #F5DEB3;
+transform: translateY(-2px);
+box-shadow: 0 4px 12px rgba(139, 26, 26, 0.4);
+}
+.tabs {
+display: flex;
+gap: 8px;
+margin-bottom: 16px;
+}
+.tab {
+flex: 1;
+padding: 12px 8px;
+text-align: center;
+background: #F5DEB3;
+border: 2px solid #d4b896;
+border-radius: 10px;
+cursor: pointer;
+font-weight: 600;
+font-size: 13px;
+color: #1a1a1a;
+transition: all 0.3s ease;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+.tab:hover {
+border-color: #E8661B;
+color: #E8661B;
+}
+.tab.active {
+background: linear-gradient(135deg, #E8661B 0%, #8B1A1A 100%);
+color: #F5DEB3;
+border-color: transparent;
+box-shadow: 0 4px 12px rgba(232, 102, 27, 0.35);
+}
+.tab-icon {
+font-size: 20px;
+display: block;
+margin-bottom: 4px;
+}
+.content {
+background: #fffdf8;
+border-radius: 16px;
+padding: 20px;
+box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+min-height: 360px;
+border-top: 6px solid;
+border-image: repeating-linear-gradient(
+90deg,
+#E8661B 0px, #E8661B 8px,
+#1a1a1a 8px, #1a1a1a 12px,
+#F5DEB3 12px, #F5DEB3 20px,
+#8B1A1A 20px, #8B1A1A 28px,
+#6B5B00 28px, #6B5B00 32px
+) 6;
+text-align: center;
+}
+.section-title {
+font-size: 17px;
+font-weight: 700;
+color: #8B1A1A;
+margin-bottom: 6px;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 8px;
+}
+.section-desc {
+color: #5a4a3a;
+font-size: 13px;
+margin-bottom: 16px;
+line-height: 1.5;
+}
+.btn-primary {
+width: 100%;
+max-width: 320px;
+padding: 14px 24px;
+background: linear-gradient(135deg, #E8661B 0%, #c45518 100%);
+color: #fff;
+border: none;
+border-radius: 12px;
+font-size: 15px;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+box-shadow: 0 4px 12px rgba(232, 102, 27, 0.3);
+margin: 0 auto 10px auto;
+display: block;
+}
+.btn-primary:hover {
+transform: translateY(-2px);
+box-shadow: 0 6px 20px rgba(232, 102, 27, 0.45);
+}
+.btn-primary:active {
+transform: translateY(0);
+}
+.btn-secondary {
+width: 100%;
+max-width: 320px;
+padding: 12px 24px;
+background: #F5DEB3;
+color: #8B1A1A;
+border: 2px solid #8B1A1A;
+border-radius: 12px;
+font-size: 14px;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+margin: 0 auto 10px auto;
+display: block;
+}
+.btn-secondary:hover {
+background: #f0d4a0;
+transform: translateY(-1px);
+}
+.btn-danger {
+width: 100%;
+max-width: 320px;
+padding: 12px 24px;
+background: #fffdf8;
+color: #8B1A1A;
+border: 2px solid #8B1A1A;
+border-radius: 12px;
+font-size: 14px;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+margin: 0 auto 10px auto;
+display: block;
+}
+.btn-danger:hover {
+background: #fce8e8;
+}
+.camera-area {
+width: 100%;
+max-width: 280px;
+aspect-ratio: 4/3;
+background: linear-gradient(135deg, #f8f4ee 0%, #f0e8da 100%);
+border-radius: 16px;
+display: flex;
+align-items: center;
+justify-content: center;
+margin: 0 auto 20px auto;
+overflow: hidden;
+border: 3px dashed #d4b896;
+position: relative;
+}
+.camera-area video, .camera-area img {
+width: 100%;
+height: 100%;
+object-fit: cover;
+border-radius: 13px;
+}
+.camera-placeholder {
+text-align: center;
+color: #a08060;
+}
+.camera-placeholder .icon {
+font-size: 40px;
+margin-bottom: 6px;
+}
+.camera-placeholder p {
+font-size: 13px;
+}
+.result-box {
+padding: 14px;
+border-radius: 10px;
+margin-top: 12px;
+font-size: 14px;
+line-height: 1.5;
+animation: fadeIn 0.5s ease;
+text-align: left;
+}
+.result-success {
+background: linear-gradient(135deg, #fdf8f0 0%, #f5ecd8 100%);
+border: 2px solid #6B5B00;
+color: #3d3500;
+}
+.result-error {
+background: linear-gradient(135deg, #fdf0ee 0%, #fce8e5 100%);
+border: 2px solid #8B1A1A;
+color: #5a1010;
+}
+.result-info {
+background: linear-gradient(135deg, #fef9f0 0%, #fdf3e0 100%);
+border: 2px solid #E8661B;
+color: #7a3500;
+}
+.result-triage {
+background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+border: 2px solid #E8661B;
+color: #F5DEB3;
+}
+.loading {
+text-align: center;
+padding: 20px;
+color: #E8661B;
+font-weight: 600;
+}
+.loading::after {
+content: '';
+animation: dots 1.5s infinite;
+}
+@keyframes dots {
+0%, 20% { content: '.'; }
+40% { content: '..'; }
+60%, 100% { content: '...'; }
+}
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.record-btn {
+width: 64px;
+height: 64px;
+border-radius: 50%;
+background: linear-gradient(135deg, #8B1A1A 0%, #6a1010 100%);
+border: 3px solid #F5DEB3;
+box-shadow: 0 4px 15px rgba(139, 26, 26, 0.4);
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+margin: 16px auto;
+transition: all 0.3s ease;
+}
+.record-btn:hover {
+transform: scale(1.1);
+box-shadow: 0 6px 20px rgba(139, 26, 26, 0.5);
+}
+.record-btn.recording {
+animation: pulse 1.5s infinite;
+background: linear-gradient(135deg, #E8661B 0%, #c45518 100%);
+}
+@keyframes pulse {
+0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(139, 26, 26, 0.4); }
+50% { transform: scale(1.05); box-shadow: 0 6px 25px rgba(232, 102, 27, 0.6); }
+}
+.record-icon {
+width: 24px;
+height: 24px;
+background: white;
+border-radius: 50%;
+}
+.record-icon.recording {
+border-radius: 4px;
+width: 20px;
+height: 20px;
+}
+.step-indicator {
+display: flex;
+justify-content: center;
+gap: 8px;
+margin-bottom: 20px;
+}
+.step-dot {
+width: 10px;
+height: 10px;
+border-radius: 50%;
+background: #e2e8f0;
+transition: all 0.3s ease;
+}
+.step-dot.active {
+background: #E8661B;
+width: 30px;
+border-radius: 5px;
+}
+.step-dot.done {
+background: #6B5B00;
+}
+.hidden {
+display: none;
+}
+.patient-card {
+background: linear-gradient(135deg, #fdf8f0 0%, #f5ecd8 100%);
+border: 2px solid #6B5B00;
+border-radius: 12px;
+padding: 16px;
+margin-top: 16px;
+}
+.patient-card h3 {
+color: #1a1a1a;
+font-size: 16px;
+margin-bottom: 8px;
+}
+.patient-card p {
+color: #3d3500;
+font-size: 14px;
+margin-bottom: 4px;
+}
+.upload-label {
+display: block;
+width: 100%;
+max-width: 320px;
+padding: 12px 24px;
+background: #fffdf8;
+color: #6B5B00;
+border: 2px solid #6B5B00;
+border-radius: 12px;
+font-size: 14px;
+font-weight: 600;
+cursor: pointer;
+text-align: center;
+transition: all 0.3s ease;
+margin: 0 auto 10px auto;
+}
+.upload-label:hover {
+background: #fdf8f0;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   CONSULTATION SECTION (NEW - WebSocket)
+   ═══════════════════════════════════════════════════════════════ */
+.consultation-section {
+margin-top: 24px;
+animation: fadeIn 0.5s ease;
+}
+.ws-status-bar {
+text-align: center;
+padding: 8px 16px;
+border-radius: 8px;
+font-size: 13px;
+font-weight: 600;
+margin-bottom: 12px;
+}
+.ws-status-bar.connected {
+background: linear-gradient(135deg, #fdf8f0 0%, #f5ecd8 100%);
+border: 2px solid #6B5B00;
+color: #3d3500;
+}
+.ws-status-bar.disconnected {
+background: linear-gradient(135deg, #fdf0ee 0%, #fce8e5 100%);
+border: 2px solid #8B1A1A;
+color: #5a1010;
+}
+.ws-status-bar.connecting {
+background: linear-gradient(135deg, #fef9f0 0%, #fdf3e0 100%);
+border: 2px solid #E8661B;
+color: #7a3500;
+}
+.chat-window {
+height: 300px;
+overflow-y: auto;
+background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+border: 2px solid #e2e8f0;
+border-radius: 12px;
+padding: 16px;
+margin-bottom: 12px;
+}
+.chat-bubble {
+max-width: 80%;
+padding: 10px 14px;
+border-radius: 12px;
+margin-bottom: 10px;
+font-size: 14px;
+line-height: 1.5;
+animation: fadeIn 0.3s ease;
+}
+.chat-bubble.patient-msg {
+background: linear-gradient(135deg, #E8661B 0%, #c45518 100%);
+color: white;
+margin-right: auto;
+border-bottom-left-radius: 4px;
+}
+.chat-bubble.doctor-msg {
+background: white;
+color: #2c3e50;
+border: 2px solid #e2e8f0;
+margin-left: auto;
+border-bottom-right-radius: 4px;
+}
+.chat-bubble .msg-label {
+font-size: 11px;
+font-weight: 600;
+margin-bottom: 4px;
+opacity: 0.8;
+}
+.chat-bubble .msg-translated {
+font-size: 12px;
+opacity: 0.7;
+margin-top: 4px;
+font-style: italic;
+}
+.chat-system-msg {
+text-align: center;
+color: #94a3b8;
+font-size: 12px;
+margin: 8px 0;
+font-style: italic;
+}
+.chat-input-area {
+display: flex;
+gap: 8px;
+}
+.chat-input-area input {
+flex: 1;
+padding: 12px 16px;
+border: 2px solid #e2e8f0;
+border-radius: 12px;
+font-size: 14px;
+outline: none;
+transition: border-color 0.3s;
+}
+.chat-input-area input:focus {
+border-color: #E8661B;
+}
+.chat-input-area button {
+padding: 12px 16px;
+border: none;
+border-radius: 12px;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s;
+}
+.chat-send-btn {
+background: linear-gradient(135deg, #E8661B 0%, #c45518 100%);
+color: white;
+}
+.chat-send-btn:hover {
+transform: translateY(-1px);
+box-shadow: 0 4px 12px rgba(232, 102, 27, 0.3);
+}
+.chat-mic-btn {
+background: #F5DEB3;
+border: 2px solid #8B1A1A !important;
+color: #8B1A1A;
+}
+.chat-mic-btn.active {
+background: #8B1A1A;
+border-color: #8B1A1A !important;
+color: #F5DEB3;
+}
+</style>
+</head>
+<body>
+<div class="header">
+<h1>ARIA Patient Check-In</h1>
+<p>Mothobi Healthcare Group &mdash; Healthcare for Africa</p>
+</div>
+<div class="lang-bar">
+<button class="lang-btn active" onclick="setLanguage('en')">English</button>
+<button class="lang-btn" onclick="setLanguage('sw')">Kiswahili</button>
+<button class="lang-btn" onclick="setLanguage('ar')">Arabic</button>
+<button class="lang-btn" onclick="setLanguage('fr')">French</button>
+</div>
+<div class="tabs">
+<div class="tab active" onclick="showTab('identify')">
+<span class="tab-icon">&#128247;</span>
+Identify
+</div>
+<div class="tab" onclick="showTab('register')">
+<span class="tab-icon">&#128221;</span>
+Register
+</div>
+</div>
+<div class="content" id="content">
+<!-- Identify Tab -->
+<div id="identify-tab">
+<div class="section-title">&#128247; Scan Your Face</div>
+<div class="section-desc" id="identify-desc">Look at the camera so we can identify you</div>
+<div class="camera-area" id="identify-camera">
+<div class="camera-placeholder">
+<div class="icon">&#128247;</div>
+<p>Camera will appear here</p>
+</div>
+</div>
+<button class="btn-primary" onclick="startIdentifyCamera()">Open Camera</button>
+<button class="btn-secondary" onclick="captureIdentify()">Take Photo</button>
+<div id="identify-result"></div>
+<!-- Triage direction appears after identification -->
+<div id="identify-triage-direction" class="hidden">
+<div class="section-title" style="margin-top: 24px;">&#128204; Proceed to Triage</div>
+<div class="section-desc">Walk straight ahead. Triage is the first room on your right. A nurse will check your weight, height, and temperature.</div>
+<div class="result-box result-info">
+<strong>&#9989; Once your vitals are recorded, press the button below to tell us how you feel.</strong>
+</div>
+<button class="btn-primary" style="margin-top: 12px; font-size: 18px; padding: 20px; max-width: 100%;" onclick="showSpeakSection('identify')">&#128073; Next Step</button>
+</div>
+<!-- Speak section appears after triage direction -->
+<div id="identify-speak" class="hidden">
+<div class="section-title" style="margin-top: 24px;">&#127908; What brings you here today?</div>
+<div class="section-desc" id="speak-desc-identify">Press the button and tell us how you feel</div>
+<div class="record-btn" id="record-btn-identify" onclick="toggleRecording('identify')">
+<div class="record-icon" id="record-icon-identify"></div>
+</div>
+<p style="text-align: center; color: #64748b; font-size: 13px;" id="record-status-identify">Tap to start recording</p>
+<div id="speak-result-identify"></div>
+</div>
+</div>
+<!-- Register Tab -->
+<div id="register-tab" class="hidden">
+<div class="step-indicator">
+<div class="step-dot active" id="step1-dot"></div>
+<div class="step-dot" id="step2-dot"></div>
+<div class="step-dot" id="step3-dot"></div>
+</div>
+<!-- Step 1: Scan ID -->
+<div id="register-step1">
+<div class="section-title">&#128196; Step 1: Scan ID Document</div>
+<div class="section-desc" id="reg-step1-desc">Take a photo of the patient's ID card or document</div>
+<div class="camera-area" id="id-camera">
+<div class="camera-placeholder">
+<div class="icon">&#128196;</div>
+<p>ID document photo</p>
+</div>
+</div>
+<button class="btn-primary" onclick="startIDCamera()">Take Photo of ID</button>
+<label class="upload-label">
+Upload ID Photo
+<input type="file" accept="image/*" onchange="uploadID(event)" style="display:none;">
+</label>
+<button class="btn-secondary" onclick="captureID()">Capture</button>
+<div id="id-result"></div>
+</div>
+<!-- Step 2: Face Photo -->
+<div id="register-step2" class="hidden">
+<div class="section-title">&#129489; Step 2: Take Face Photo</div>
+<div class="section-desc" id="reg-step2-desc">Capture a clear photo of the patient's face</div>
+<div class="camera-area" id="face-camera">
+<div class="camera-placeholder">
+<div class="icon">&#129489;</div>
+<p>Face photo</p>
+</div>
+</div>
+<button class="btn-primary" onclick="startFaceCamera()">Open Camera</button>
+<button class="btn-secondary" onclick="captureFace()">Take Photo</button>
+<div id="face-result"></div>
+</div>
+<!-- Step 3: Review & Register -->
+<div id="register-step3" class="hidden">
+<div class="section-title">&#9989; Step 3: Review and Register</div>
+<div class="section-desc">Review the information and complete registration</div>
+<div id="review-info" class="patient-card">
+<h3>Patient Information</h3>
+<p>Loading...</p>
+</div>
+<button class="btn-primary" style="margin-top: 16px;" onclick="registerPatient()">Register Patient</button>
+<button class="btn-danger" onclick="startOver()">Start Over</button>
+<div id="register-result"></div>
+<!-- Triage direction after registration -->
+<div id="register-triage-direction" class="hidden">
+<div class="section-title" style="margin-top: 24px;">&#128204; Proceed to Triage</div>
+<div class="section-desc">Walk straight ahead. Triage is the first room on your right. A nurse will check your weight, height, and temperature.</div>
+<div class="result-box result-info">
+<strong>&#9989; Once your vitals are recorded, press the button below to tell us how you feel.</strong>
+</div>
+<button class="btn-primary" style="margin-top: 12px; font-size: 18px; padding: 20px; max-width: 100%;" onclick="showSpeakSection('register')">&#128073; Next Step</button>
+</div>
+<!-- Speak section after triage direction -->
+<div id="register-speak" class="hidden">
+<div class="section-title" style="margin-top: 24px;">&#127908; What brings you here today?</div>
+<div class="section-desc" id="speak-desc-register">Press the button and tell us how you feel</div>
+<div class="record-btn" id="record-btn-register" onclick="toggleRecording('register')">
+<div class="record-icon" id="record-icon-register"></div>
+</div>
+<p style="text-align: center; color: #64748b; font-size: 13px;" id="record-status-register">Tap to start recording</p>
+<div id="speak-result-register"></div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     CONSULTATION SECTION (Appears after "consultation_waiting" stage)
+     ═══════════════════════════════════════════════════════════════ -->
+<div id="consultation-section" class="consultation-section hidden">
+<div class="content" style="margin-top: 16px;">
+<div class="section-title">&#129658; Doctor Consultation</div>
+<div class="section-desc" id="consult-info">Connecting to your doctor...</div>
+<div class="ws-status-bar connecting" id="ws-status">&#9679; Connecting...</div>
+<div class="chat-window" id="chat-window"></div>
+<div class="chat-input-area">
+<input type="text" id="chat-input" placeholder="Type your message..."
+       onkeypress="if(event.key==='Enter') sendChatMsg()">
+<button class="chat-mic-btn" id="chat-mic-btn" onclick="toggleChatVoice()">&#127908;</button>
+<button class="chat-send-btn" onclick="sendChatMsg()">Send</button>
+</div>
+<button class="btn-danger" style="margin-top: 12px;" onclick="endConsult()">End Consultation</button>
+</div>
+</div>
+
+<script>
+var API_URL = 'https://cytghce6w0.execute-api.us-east-1.amazonaws.com/demo/identify';
+var currentLang = 'en';
+var currentPatientId = null;
+var currentSessionStage = null;
+var mediaRecorder = null;
+var audioChunks = [];
+var isRecording = false;
+var identifyStream = null;
+var idStream = null;
+var faceStream = null;
+
+var translations = {
+en: {
+welcome: 'Welcome to Motobi Healthcare. Please look at the camera.',
+identify_desc: 'Look at the camera so we can identify you',
+speak_prompt: 'Press the button and tell us how you feel',
+step1_desc: 'Take a photo of the patient\'s ID card or document',
+step2_desc: 'Capture a clear photo of the patient\'s face',
+recording: 'Recording... tap to stop',
+tap_record: 'Tap to start recording',
+routing: 'Thank you! Please wait as we route you to the right clinic...',
+welcome_back: 'Welcome back, '
+},
+sw: {
+welcome: 'Karibu Motobi Healthcare. Tafadhali angalia kamera.',
+identify_desc: 'Angalia kamera ili tukutambue',
+speak_prompt: 'Bonyeza kitufe na utuambie unavyojisikia',
+step1_desc: 'Piga picha ya kitambulisho cha mgonjwa',
+step2_desc: 'Piga picha ya uso wa mgonjwa',
+recording: 'Inarekodiwa... gonga kusimamisha',
+tap_record: 'Gonga kuanza kurekodi',
+routing: 'Asante! Tafadhali subiri tunapokupeleka kliniki sahihi...',
+welcome_back: 'Karibu tena, '
+},
+ar: {
+welcome: 'مرحبا بكم في موتوبي للرعاية الصحية. يرجى النظر إلى الكاميرا.',
+identify_desc: 'انظر إلى الكاميرا حتى نتمكن من التعرف عليك',
+speak_prompt: 'اضغط على الزر وأخبرنا كيف تشعر',
+step1_desc: 'التقط صورة لبطاقة هوية المريض',
+step2_desc: 'التقط صورة واضحة لوجه المريض',
+recording: 'جاري التسجيل... اضغط للإيقاف',
+tap_record: 'اضغط لبدء التسجيل',
+routing: 'شكراً! يرجى الانتظار بينما نوجهك إلى العيادة المناسبة...',
+welcome_back: 'مرحبا بعودتك، '
+},
+fr: {
+welcome: 'Bienvenue chez Motobi Healthcare. Veuillez regarder la camera.',
+identify_desc: 'Regardez la camera pour que nous puissions vous identifier',
+speak_prompt: 'Appuyez sur le bouton et dites-nous comment vous vous sentez',
+step1_desc: 'Prenez une photo de la carte d\'identite du patient',
+step2_desc: 'Prenez une photo claire du visage du patient',
+recording: 'Enregistrement... appuyez pour arreter',
+tap_record: 'Appuyez pour commencer l\'enregistrement',
+routing: 'Merci! Nous vous dirigeons vers la bonne clinique...',
+welcome_back: 'Bienvenue, '
+}
+};
+
+// Speak text using Polly (EN/AR/FR) or browser synthesis (SW)
+function speakText(text, lang) {
+if (!lang) lang = currentLang;
+var lookupLang = lang;
+if (lang === 'sw-KE') lookupLang = 'sw';
+if (lookupLang === 'sw') {
+window.speechSynthesis.cancel();
+var utterance = new SpeechSynthesisUtterance(text);
+utterance.lang = 'sw-KE';
+utterance.rate = 0.9;
+var voices = window.speechSynthesis.getVoices();
+var swVoice = null;
+for (var i = 0; i < voices.length; i++) {
+if (voices[i].lang && voices[i].lang.indexOf('sw') === 0) {
+swVoice = voices[i];
+break;
+}
+}
+if (swVoice) { utterance.voice = swVoice; }
+window.speechSynthesis.speak(utterance);
+} else {
+fetch(API_URL, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ action: 'speak', text: text, language: lookupLang })
+})
+.then(function(r) { return r.json(); })
+.then(function(data) {
+if (data.audio_base64) {
+var audio = new Audio('data:audio/mpeg;base64,' + data.audio_base64);
+audio.play();
+}
+})
+.catch(function(err) {
+var utterance = new SpeechSynthesisUtterance(text);
+utterance.lang = lang;
+window.speechSynthesis.speak(utterance);
+});
+}
+}
+
+function t(key) {
+var lang = currentLang;
+if (lang === 'sw-KE') lang = 'sw';
+if (translations[lang] && translations[lang][key]) { return translations[lang][key]; }
+return translations['en'][key] || '';
+}
+
+function setLanguage(lang) {
+currentLang = lang;
+document.querySelectorAll('.lang-btn').forEach(function(btn) { btn.classList.remove('active'); });
+event.target.classList.add('active');
+document.getElementById('identify-desc').textContent = t('identify_desc');
+document.getElementById('speak-desc-identify').textContent = t('speak_prompt');
+document.getElementById('reg-step1-desc').textContent = t('step1_desc');
+document.getElementById('reg-step2-desc').textContent = t('step2_desc');
+document.getElementById('speak-desc-register').textContent = t('speak_prompt');
+speakText(t('welcome'), lang);
+}
+
+function showTab(tab) {
+document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+document.getElementById('identify-tab').classList.add('hidden');
+document.getElementById('register-tab').classList.add('hidden');
+if (tab === 'identify') {
+document.querySelectorAll('.tab')[0].classList.add('active');
+document.getElementById('identify-tab').classList.remove('hidden');
+} else {
+document.querySelectorAll('.tab')[1].classList.add('active');
+document.getElementById('register-tab').classList.remove('hidden');
+}
+}
+
+// ===== IDENTIFY FUNCTIONS =====
+function startIdentifyCamera() {
+var cameraArea = document.getElementById('identify-camera');
+navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+.then(function(stream) {
+identifyStream = stream;
+cameraArea.innerHTML = '<video autoplay playsinline></video>';
+cameraArea.querySelector('video').srcObject = stream;
+})
+.catch(function(err) {
+cameraArea.innerHTML = '<div class="camera-placeholder"><div class="icon">&#9888;</div><p>Camera access denied</p></div>';
+});
+}
+
+function captureIdentify() {
+var video = document.querySelector('#identify-camera video');
+if (!video) return;
+var canvas = document.createElement('canvas');
+canvas.width = video.videoWidth;
+canvas.height = video.videoHeight;
+canvas.getContext('2d').drawImage(video, 0, 0);
+var base64 = canvas.toDataURL('image/jpeg').split(',')[1];
+if (identifyStream) { identifyStream.getTracks().forEach(function(track) { track.stop(); }); }
+document.getElementById('identify-camera').innerHTML = '<img src="data:image/jpeg;base64,' + base64 + '">';
+document.getElementById('identify-result').innerHTML = '<div class="loading">Identifying patient</div>';
+fetch(API_URL, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ action: 'identify_patient', image_base64: base64, bucket: 'aria-registrations' })
+})
+.then(function(r) { return r.json(); })
+.then(function(data) {
+if (data.status === 'PATIENT_IDENTIFIED') {
+currentPatientId = data.patient_id;
+var name = data.patient_name || data.patient_id;
+var welcomeMsg = t('welcome_back') + name + '!';
+document.getElementById('identify-result').innerHTML =
+'<div class="result-box result-success">' +
+'<strong>' + welcomeMsg + '</strong><br>' +
+'Patient ID: ' + data.patient_id + '<br>' +
+'Confidence: ' + (data.confidence || 'N/A') + '%' +
+'</div>';
+speakText(welcomeMsg, currentLang);
+setTimeout(function() {
+document.getElementById('identify-triage-direction').classList.remove('hidden');
+speakText('Please walk straight ahead to triage. A nurse will check your vitals.', currentLang);
+}, 3000);
+} else if (data.status === 'NEW_PATIENT') {
+document.getElementById('identify-result').innerHTML =
+'<div class="result-box result-info">' +
+'We don\'t recognize you yet. Please register as a new patient.' +
+'</div>';
+setTimeout(function() { showTab('register'); }, 2000);
+} else {
+document.getElementById('identify-result').innerHTML =
+'<div class="result-box result-error">' + (data.error || 'Unknown error') + '</div>';
+}
+})
+.catch(function(err) {
+document.getElementById('identify-result').innerHTML =
+'<div class="result-box result-error">Connection Error: ' + err.message + '</div>';
+});
+}
+
+// ===== REGISTER FUNCTIONS =====
+window.idData = null;
+window.faceBase64 = null;
+
+function startIDCamera() {
+var cameraArea = document.getElementById('id-camera');
+navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+.then(function(stream) {
+idStream = stream;
+cameraArea.innerHTML = '<video autoplay playsinline></video>';
+cameraArea.querySelector('video').srcObject = stream;
+})
+.catch(function(err) {
+cameraArea.innerHTML = '<div class="camera-placeholder"><div class="icon">&#9888;</div><p>Camera access denied</p></div>';
+});
+}
+
+function uploadID(event) {
+var file = event.target.files[0];
+if (!file) return;
+var reader = new FileReader();
+reader.onload = function(e) {
+var base64 = e.target.result.split(',')[1];
+document.getElementById('id-camera').innerHTML = '<img src="data:image/jpeg;base64,' + base64 + '">';
+sendIDToLambda(base64);
+};
+reader.readAsDataURL(file);
+}
+
+function captureID() {
+var video = document.querySelector('#id-camera video');
+if (!video) return;
+var canvas = document.createElement('canvas');
+canvas.width = video.videoWidth;
+canvas.height = video.videoHeight;
+canvas.getContext('2d').drawImage(video, 0, 0);
+var base64 = canvas.toDataURL('image/jpeg').split(',')[1];
+if (idStream) { idStream.getTracks().forEach(function(track) { track.stop(); }); }
+document.getElementById('id-camera').innerHTML = '<img src="data:image/jpeg;base64,' + base64 + '">';
+sendIDToLambda(base64);
+}
+
+function sendIDToLambda(base64) {
+document.getElementById('id-result').innerHTML = '<div class="loading">Scanning ID document</div>';
+fetch(API_URL, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ action: 'extract_id', image_base64: base64, bucket: 'aria-registrations' })
+})
+.then(function(r) { return r.json(); })
+.then(function(data) {
+if (data.status === 'ID_EXTRACTED') {
+window.idData = data;
+document.getElementById('id-result').innerHTML =
+'<div class="result-box result-success">' +
+'<strong>ID Scanned Successfully</strong><br>' +
+'Name: ' + (data.full_name || 'N/A') + '<br>' +
+'ID: ' + (data.id_number || 'N/A') +
+'</div>';
+setTimeout(function() {
+document.getElementById('register-step1').classList.add('hidden');
+document.getElementById('register-step2').classList.remove('hidden');
+document.getElementById('step1-dot').classList.remove('active');
+document.getElementById('step1-dot').classList.add('done');
+document.getElementById('step2-dot').classList.add('active');
+}, 1500);
+} else {
+document.getElementById('id-result').innerHTML =
+'<div class="result-box result-error">' + (data.error || 'Could not read ID') + '</div>';
+}
+})
+.catch(function(err) {
+document.getElementById('id-result').innerHTML =
+'<div class="result-box result-error">Connection Error: ' + err.message + '</div>';
+});
+}
+
+function startFaceCamera() {
+var cameraArea = document.getElementById('face-camera');
+navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+.then(function(stream) {
+faceStream = stream;
+cameraArea.innerHTML = '<video autoplay playsinline></video>';
+cameraArea.querySelector('video').srcObject = stream;
+})
+.catch(function(err) {
+cameraArea.innerHTML = '<div class="camera-placeholder"><div class="icon">&#9888;</div><p>Camera access denied</p></div>';
+});
+}
+
+function captureFace() {
+var video = document.querySelector('#face-camera video');
+if (!video) return;
+var canvas = document.createElement('canvas');
+canvas.width = video.videoWidth;
+canvas.height = video.videoHeight;
+canvas.getContext('2d').drawImage(video, 0, 0);
+window.faceBase64 = canvas.toDataURL('image/jpeg').split(',')[1];
+if (faceStream) { faceStream.getTracks().forEach(function(track) { track.stop(); }); }
+document.getElementById('face-camera').innerHTML = '<img src="data:image/jpeg;base64,' + window.faceBase64 + '">';
+document.getElementById('face-result').innerHTML =
+'<div class="result-box result-success">Face photo captured!</div>';
+setTimeout(function() {
+document.getElementById('register-step2').classList.add('hidden');
+document.getElementById('register-step3').classList.remove('hidden');
+document.getElementById('step2-dot').classList.remove('active');
+document.getElementById('step2-dot').classList.add('done');
+document.getElementById('step3-dot').classList.add('active');
+var name = window.idData ? window.idData.full_name : 'Unknown';
+var idNum = window.idData ? window.idData.id_number : 'N/A';
+document.getElementById('review-info').innerHTML =
+'<h3>Patient Information</h3>' +
+'<p><strong>Name:</strong> ' + name + '</p>' +
+'<p><strong>ID Number:</strong> ' + idNum + '</p>' +
+'<p><strong>Language:</strong> ' + currentLang.toUpperCase() + '</p>';
+}, 1500);
+}
+
+function registerPatient() {
+if (!window.faceBase64 || !window.idData) {
+document.getElementById('register-result').innerHTML =
+'<div class="result-box result-error">Missing face photo or ID data</div>';
+return;
+}
+document.getElementById('register-result').innerHTML = '<div class="loading">Registering patient</div>';
+fetch(API_URL, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({
+action: 'register_with_id',
+image_base64: window.faceBase64,
+id_data: window.idData,
+bucket: 'aria-registrations',
+preferred_language: currentLang
+})
+})
+.then(function(r) { return r.json(); })
+.then(function(data) {
+if (data.status === 'PATIENT_REGISTERED') {
+currentPatientId = data.patient_id;
+document.getElementById('register-result').innerHTML =
+'<div class="result-box result-success">' +
+'<strong>Registration Complete!</strong><br>' +
+'Patient ID: ' + data.patient_id + '<br>' +
+'Name: ' + (data.patient_name || window.idData.full_name) +
+'</div>';
+var successMsg = t('welcome_back') + (window.idData.full_name || 'Patient');
+speakText(successMsg, currentLang);
+setTimeout(function() {
+document.getElementById('register-triage-direction').classList.remove('hidden');
+speakText('Please walk straight ahead to triage. A nurse will check your vitals.', currentLang);
+}, 3000);
+} else {
+document.getElementById('register-result').innerHTML =
+'<div class="result-box result-error">' + (data.error || 'Registration failed') + '</div>';
+}
+})
+.catch(function(err) {
+document.getElementById('register-result').innerHTML =
+'<div class="result-box result-error">Connection Error: ' + err.message + '</div>';
+});
+}
+
+function startOver() {
+window.idData = null;
+window.faceBase64 = null;
+document.getElementById('register-step1').classList.remove('hidden');
+document.getElementById('register-step2').classList.add('hidden');
+document.getElementById('register-step3').classList.add('hidden');
+document.getElementById('register-speak').classList.add('hidden');
+document.getElementById('step1-dot').classList.add('active');
+document.getElementById('step1-dot').classList.remove('done');
+document.getElementById('step2-dot').classList.remove('active');
+document.getElementById('step2-dot').classList.remove('done');
+document.getElementById('step3-dot').classList.remove('active');
+document.getElementById('id-result').innerHTML = '';
+document.getElementById('face-result').innerHTML = '';
+document.getElementById('register-result').innerHTML = '';
+document.getElementById('id-camera').innerHTML = '<div class="camera-placeholder"><div class="icon">&#128196;</div><p>ID document photo</p></div>';
+document.getElementById('face-camera').innerHTML = '<div class="camera-placeholder"><div class="icon">&#129489;</div><p>Face photo</p></div>';
+}
+
+// ===== TRIAGE DIRECTION → SPEAK =====
+function showSpeakSection(context) {
+document.getElementById(context + '-triage-direction').classList.add('hidden');
+document.getElementById(context + '-speak').classList.remove('hidden');
+speakText(t('speak_prompt'), currentLang);
+}
+
+// ===== RECORDING FUNCTIONS =====
+function toggleRecording(context) {
+if (isRecording) { stopRecording(context); }
+else { startRecording(context); }
+}
+
+function startRecording(context) {
+navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } })
+.then(function(stream) {
+// Use audio/webm for better browser compatibility
+var options = { mimeType: 'audio/webm;codecs=opus' };
+try { mediaRecorder = new MediaRecorder(stream, options); }
+catch(e) { mediaRecorder = new MediaRecorder(stream); }
+
+audioChunks = [];
+isRecording = true;
+window.recordingStartTime = Date.now();
+
+document.getElementById('record-btn-' + context).classList.add('recording');
+document.getElementById('record-icon-' + context).classList.add('recording');
+document.getElementById('record-status-' + context).textContent = t('recording');
+
+mediaRecorder.ondataavailable = function(e) {
+if (e.data.size > 0) audioChunks.push(e.data);
+};
+mediaRecorder.onstop = function() {
+var duration = (Date.now() - window.recordingStartTime) / 1000;
+if (duration < 2) {
+// Too short — prompt user to speak longer
+document.getElementById('speak-result-' + context).innerHTML =
+'<div class="result-box result-info">Recording was too short. Please hold the button longer and describe your symptoms fully.</div>';
+stream.getTracks().forEach(function(track) { track.stop(); });
+return;
+}
+var audioBlob = new Blob(audioChunks, { type: mediaRecorder.mimeType || 'audio/webm' });
+sendAudio(audioBlob, context);
+stream.getTracks().forEach(function(track) { track.stop(); });
+};
+// Collect data every 1 second to prevent loss on long recordings
+mediaRecorder.start(1000);
+
+// Update timer every second
+window.recordingTimer = setInterval(function() {
+var elapsed = Math.floor((Date.now() - window.recordingStartTime) / 1000);
+var statusEl = document.getElementById('record-status-' + context);
+if (statusEl) statusEl.textContent = t('recording') + ' (' + elapsed + 's)';
+}, 1000);
+})
+.catch(function(err) {
+document.getElementById('speak-result-' + context).innerHTML =
+'<div class="result-box result-error">Microphone access denied</div>';
+});
+}
+
+function stopRecording(context) {
+if (mediaRecorder && isRecording) {
+isRecording = false;
+if (window.recordingTimer) { clearInterval(window.recordingTimer); window.recordingTimer = null; }
+mediaRecorder.stop();
+document.getElementById('record-btn-' + context).classList.remove('recording');
+document.getElementById('record-icon-' + context).classList.remove('recording');
+document.getElementById('record-status-' + context).textContent = t('tap_record');
+}
+}
+
+function sendAudio(audioBlob, context) {
+var resultDiv = document.getElementById('speak-result-' + context);
+resultDiv.innerHTML = '<div class="loading">Processing your voice</div>';
+speakText(t('routing'), currentLang);
+var reader = new FileReader();
+reader.onload = function(e) {
+var base64Audio = e.target.result.split(',')[1];
+fetch(API_URL, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({
+action: 'save_audio',
+audio_base64: base64Audio,
+patient_id: currentPatientId,
+bucket: 'aria-registrations',
+preferred_language: currentLang
+})
+})
+.then(function(r) { return r.json(); })
+.then(function(data) {
+if (data.status === 'AUDIO_SAVED') {
+resultDiv.innerHTML =
+'<div class="result-box result-info">' +
+'<strong>' + t('routing') + '</strong>' +
+'</div>';
+if (data.job_name) { pollTranscription(data.job_name, context); }
+} else {
+resultDiv.innerHTML =
+'<div class="result-box result-error">' + (data.error || 'Audio save failed') + '</div>';
+}
+})
+.catch(function(err) {
+resultDiv.innerHTML =
+'<div class="result-box result-error">Connection Error: ' + err.message + '</div>';
+});
+};
+reader.readAsDataURL(audioBlob);
+}
+
+function pollTranscription(jobName, context) {
+var resultDiv = document.getElementById('speak-result-' + context);
+var pollInterval = setInterval(function() {
+fetch(API_URL, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ action: 'get_transcription', job_name: jobName, patient_id: currentPatientId })
+})
+.then(function(r) { return r.json(); })
+.then(function(data) {
+console.log('TRANSCRIPTION POLL:', JSON.stringify(data));
+if (data.status === 'TRANSCRIPTION_COMPLETE') {
+clearInterval(pollInterval);
+var transcript = data.transcript || data.transcript_original || '';
+resultDiv.innerHTML =
+'<div class="result-box result-success">' +
+'<strong>We heard you:</strong><br>' +
+'"' + transcript + '"' +
+'</div>';
+pollTriage(context);
+} else if (data.status === 'FAILED') {
+clearInterval(pollInterval);
+resultDiv.innerHTML =
+'<div class="result-box result-error">Transcription failed. Please try again.</div>';
+}
+})
+.catch(function(err) {
+clearInterval(pollInterval);
+resultDiv.innerHTML =
+'<div class="result-box result-error">Connection Error: ' + err.message + '</div>';
+});
+}, 3000);
+}
+
+function pollTriage(context) {
+var resultDiv = document.getElementById('speak-result-' + context);
+resultDiv.innerHTML +=
+'<div class="result-box result-info" style="margin-top: 12px;">' +
+'<div class="loading">Finding the right clinic for you</div>' +
+'</div>';
+var triageInterval = setInterval(function() {
+fetch(API_URL, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({ action: 'get_triage_status', patient_id: currentPatientId })
+})
+.then(function(r) { return r.json(); })
+.then(function(data) {
+console.log('RAW TRIAGE:', JSON.stringify(data));
+if (typeof data.body === 'string') { data = JSON.parse(data.body); }
+console.log('PARSED TRIAGE:', JSON.stringify(data));
+if (data.status === 'TRIAGE_COMPLETE') {
+clearInterval(triageInterval);
+var langKey = currentLang;
+if (langKey === 'sw-KE') langKey = 'sw';
+var triageMsg = '';
+if (langKey === 'sw') {
+triageMsg = 'Umepangiwa ' + data.department + '. Daktari ' + data.doctor + ' atakuona.';
+} else if (langKey === 'ar') {
+triageMsg = '\u062A\u0645 \u062A\u0639\u064A\u064A\u0646\u0643 \u0625\u0644\u0649 ' + data.department + '. \u0627\u0644\u062F\u0643\u062A\u0648\u0631 ' + data.doctor + ' \u0633\u064A\u0631\u0627\u0643.';
+} else if (langKey === 'fr') {
+triageMsg = 'Vous avez ete assigne a ' + data.department + '. Dr ' + data.doctor + ' vous verra.';
+} else {
+triageMsg = 'You have been assigned to ' + data.department + '. ' + data.doctor + ' will see you.';
+}
+resultDiv.innerHTML =
+'<div class="result-box result-triage" style="margin-top: 12px;">' +
+'<strong>&#127973; ' + triageMsg + '</strong>' +
+'</div>' +
+'<div id="post-triage-actions" style="margin-top: 16px;">' +
+'<button class="btn-primary" style="font-size: 18px; padding: 20px; max-width: 100%;" onclick="proceedAfterTriage()">&#128073; Next Step</button>' +
+'</div>' +
+'<div id="post-triage-nav"></div>';
+speakText(triageMsg, currentLang);
+currentSessionStage = 'triage_complete';
+}
+})
+.catch(function(err) { /* silently retry */ });
+}, 4000);
+setTimeout(function() { clearInterval(triageInterval); }, 60000);
+}
+
+// ===== TRANSLATION HELPER =====
+function translateText(text, callback) {
+// If language is English, no translation needed
+if (currentLang === 'en') { callback(text); return; }
+
+fetch(API_URL, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({
+action: 'translate_text',
+text: text,
+source_language: 'en',
+target_language: currentLang
+})
+})
+.then(function(r) { return r.json(); })
+.then(function(data) {
+if (typeof data.body === 'string') { data = JSON.parse(data.body); }
+callback(data.translated_text || text);
+})
+.catch(function(err) {
+callback(text); // Fallback to original
+});
+}
+
+// ===== POST-TRIAGE: SINGLE FLOW FOR ILLITERATE USERS =====
+function proceedAfterTriage() {
+var actionsDiv = document.getElementById('post-triage-actions');
+var navDiv = document.getElementById('post-triage-nav');
+
+// Show loading
+if (actionsDiv) actionsDiv.innerHTML = '<div class="loading">Please wait</div>';
+
+// Get directions to doctor's room
+fetch(API_URL, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({
+action: 'get_directions',
+patient_id: currentPatientId,
+session_stage: 'triage_complete',
+input_text: 'I am ready, where do I go next?',
+language: currentLang
+})
+})
+.then(function(r) { return r.json(); })
+.then(function(data) {
+if (typeof data.body === 'string') { data = JSON.parse(data.body); }
+var responseText = data.response_text || 'Please proceed to the consultation room.';
+
+translateText(responseText, function(translated) {
+if (navDiv) {
+navDiv.innerHTML =
+'<div class="result-box result-success" style="margin-top: 12px;">' +
+'<strong>&#128204;</strong> ' + translated +
+'</div>';
+}
+if (actionsDiv) {
+actionsDiv.innerHTML =
+'<button class="btn-primary" style="font-size: 18px; padding: 20px; max-width: 100%; margin-top: 12px;" onclick="beginConsultation()">&#128073; I have arrived — See Doctor</button>';
+}
+speakText(translated, currentLang);
+});
+})
+.catch(function(err) {
+if (actionsDiv) {
+actionsDiv.innerHTML =
+'<button class="btn-primary" style="font-size: 18px; padding: 20px; max-width: 100%;" onclick="beginConsultation()">&#128073; See Doctor</button>';
+}
+});
+}
+
+function beginConsultation() {
+var actionsDiv = document.getElementById('post-triage-actions');
+if (actionsDiv) actionsDiv.innerHTML = '';
+var navDiv = document.getElementById('post-triage-nav');
+if (navDiv) navDiv.innerHTML = '';
+startConsultation();
+}
+
+// ===== POST-TRIAGE: ORCHESTRATOR NAVIGATION =====
+function getDirections(stage) {
+var navDiv = document.getElementById('post-triage-nav');
+if (!navDiv) return;
+navDiv.innerHTML = '<div class="loading">Getting directions</div>';
+fetch(API_URL, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({
+action: 'get_directions',
+patient_id: currentPatientId,
+session_stage: stage,
+input_text: 'I am ready, where do I go next?',
+language: currentLang
+})
+})
+.then(function(r) { return r.json(); })
+.then(function(data) {
+console.log('DIRECTIONS RESPONSE:', JSON.stringify(data));
+if (typeof data.body === 'string') { data = JSON.parse(data.body); }
+var responseText = data.response_text || 'Please ask a staff member for directions.';
+var newStage = data.new_stage || stage;
+currentSessionStage = newStage;
+var nextAction = getNextAction(newStage);
+
+// Translate response before displaying
+translateText(responseText, function(translated) {
+navDiv.innerHTML =
+'<div class="result-box result-success" style="margin-top: 12px;">' +
+'<strong>&#128204; ARIA:</strong><br>' +
+translated +
+'</div>' +
+(nextAction ? '<button class="btn-primary" style="margin-top: 12px;" onclick="getDirections(\'' + nextAction.stage + '\')">' + nextAction.label + '</button>' : '<div class="result-box result-info" style="margin-top: 12px;"><strong>&#9989; Your visit is complete. Thank you!</strong></div>');
+speakText(translated, currentLang);
+});
+})
+.catch(function(err) {
+console.error('Directions error:', err);
+navDiv.innerHTML =
+'<div class="result-box result-error" style="margin-top: 12px;">Could not get directions. Please ask a staff member.</div>' +
+'<button class="btn-secondary" style="margin-top: 12px;" onclick="getDirections(\'' + stage + '\')">Try Again</button>';
+});
+}
+
+function getNextAction(currentStage) {
+var stageFlow = {
+'triage_complete': { stage: 'consultation_waiting', label: '&#128073; Next Step' },
+'consultation_waiting': { stage: 'post_consultation', label: '&#128073; Next Step' },
+'post_consultation': { stage: 'pharmacy', label: '&#128073; Next Step' },
+'pharmacy': { stage: 'discharge', label: '&#128073; Next Step' },
+'lab': { stage: 'discharge', label: '&#128073; Next Step' },
+'discharge': null
+};
+return stageFlow[currentStage] || null;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// CONSULTATION (WebSocket + Bedrock AI Fallback for Demo)
+// ═══════════════════════════════════════════════════════════════════════
+// In production: A real doctor connects via WebSocket from their doctor-facing interface.
+// For demo: If no doctor responds within 5 seconds, Bedrock simulates the doctor.
+// The WebSocket connection is always attempted first.
+
+var WS_URL = 'wss://8ko3wl8l0c.execute-api.us-east-1.amazonaws.com/prod';
+var ws = null;
+var consultationActive = false;
+var doctorConnected = false;
+
+function startConsultation() {
+consultationActive = true;
+doctorConnected = false;
+document.getElementById('consultation-section').classList.remove('hidden');
+document.getElementById('consult-info').textContent =
+'Patient: ' + (currentPatientId || 'Unknown') + ' | Language: ' + currentLang.toUpperCase();
+
+// Attempt WebSocket connection
+var sessionId = 'session-' + currentPatientId + '-' + Date.now();
+var url = WS_URL + '?role=patient&patient_id=' + currentPatientId + '&session_id=' + sessionId;
+
+updateWsStatus('connecting');
+addSystemMsg('Connecting to your doctor...');
+
+try {
+ws = new WebSocket(url);
+
+ws.onopen = function() {
+updateWsStatus('connected');
+addSystemMsg('Connected. Waiting for doctor...');
+// If no doctor message arrives in 5s, use Bedrock AI
+setTimeout(function() {
+if (!doctorConnected && consultationActive) {
+addSystemMsg('Doctor is AI-assisted today. You may speak or type.');
+fetchDoctorResponse('Hello doctor, I am here for my consultation.');
+}
+}, 5000);
+};
+
+ws.onmessage = function(event) {
+var data = JSON.parse(event.data);
+if (data.type === 'message' && data.from === 'doctor') {
+doctorConnected = true;
+addChatBubble('doctor', data.translated_text || data.text, data.original_text);
+speakText(data.translated_text || data.text, currentLang);
+} else if (data.type === 'consultation_ended') {
+addSystemMsg('Consultation complete. Thank you!');
+updateWsStatus('disconnected');
+consultationActive = false;
+ws.close();
+setTimeout(function() {
+document.getElementById('consultation-section').classList.add('hidden');
+getDirections('post_consultation');
+}, 3000);
+}
+};
+
+ws.onclose = function() {
+if (consultationActive && !doctorConnected) {
+updateWsStatus('connected');
+addSystemMsg('Doctor is AI-assisted today. You may speak or type.');
+fetchDoctorResponse('Hello doctor, I am here for my consultation.');
+}
+};
+
+ws.onerror = function() {
+// WebSocket failed — fall back to Bedrock AI doctor
+updateWsStatus('connected');
+addSystemMsg('Doctor is AI-assisted today. You may speak or type.');
+fetchDoctorResponse('Hello doctor, I am here for my consultation.');
+};
+} catch(e) {
+// WebSocket not available — use Bedrock directly
+updateWsStatus('connected');
+addSystemMsg('Doctor is AI-assisted today. You may speak or type.');
+fetchDoctorResponse('Hello doctor, I am here for my consultation.');
+}
+}
+
+function fetchDoctorResponse(patientText) {
+addSystemMsg('Doctor is reviewing...');
+
+// Build full conversation history from chat bubbles
+var chatWindow = document.getElementById('chat-window');
+var bubbles = chatWindow.querySelectorAll('.chat-bubble');
+var conversationHistory = '';
+for (var i = 0; i < bubbles.length; i++) {
+var role = bubbles[i].classList.contains('doctor-msg') ? 'Doctor' : 'Patient';
+// Get the main text (skip label and translated text)
+var mainDiv = bubbles[i].querySelector('div:not(.msg-label):not(.msg-translated)');
+var text = mainDiv ? mainDiv.textContent.trim() : bubbles[i].textContent.trim();
+if (text) conversationHistory += role + ': ' + text + '\n';
+}
+// Add the latest patient message if not already in bubbles
+if (patientText && conversationHistory.indexOf(patientText) === -1) {
+conversationHistory += 'Patient: ' + patientText + '\n';
+}
+
+fetch(API_URL, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({
+action: 'get_directions',
+patient_id: currentPatientId,
+session_stage: 'consultation_waiting',
+input_text: conversationHistory || patientText,
+language: currentLang
+})
+})
+.then(function(r) { return r.json(); })
+.then(function(data) {
+if (typeof data.body === 'string') { data = JSON.parse(data.body); }
+var responseText = data.response_text || 'Please wait, I am reviewing your case.';
+// Remove the "Doctor is reviewing..." system message
+var systemMsgs = document.querySelectorAll('.chat-system-msg');
+if (systemMsgs.length > 0) {
+var last = systemMsgs[systemMsgs.length - 1];
+if (last.textContent.indexOf('reviewing') !== -1) last.remove();
+}
+// Translate doctor response to patient's language
+translateText(responseText, function(translated) {
+addChatBubble('doctor', translated, (currentLang !== 'en' ? responseText : null));
+speakText(translated, currentLang);
+});
+})
+.catch(function(err) {
+addChatBubble('doctor', 'I am reviewing your file. One moment please.', null);
+});
+}
+
+function sendChatMsg() {
+var input = document.getElementById('chat-input');
+var text = input.value.trim();
+if (!text || !consultationActive) return;
+
+addChatBubble('patient', text, null);
+input.value = '';
+
+if (doctorConnected && ws && ws.readyState === WebSocket.OPEN) {
+// Real doctor is connected — send via WebSocket
+ws.send(JSON.stringify({
+action: 'sendMessage',
+text: text,
+language: currentLang
+}));
+} else {
+// AI doctor — send to Bedrock
+fetchDoctorResponse(text);
+}
+}
+
+function endConsult() {
+consultationActive = false;
+updateWsStatus('disconnected');
+addSystemMsg('Consultation ended. Analyzing conversation...');
+
+// Collect full conversation transcript from chat bubbles
+var chatWindow = document.getElementById('chat-window');
+var bubbles = chatWindow.querySelectorAll('.chat-bubble');
+var transcript = '';
+for (var i = 0; i < bubbles.length; i++) {
+var role = bubbles[i].classList.contains('doctor-msg') ? 'Doctor' : 'Patient';
+var text = bubbles[i].textContent.replace(/^(Doctor|You)\s*/, '').trim();
+if (text) transcript += role + ': ' + text + '\n';
+}
+
+// If real doctor connected, also close WS
+if (doctorConnected && ws && ws.readyState === WebSocket.OPEN) {
+ws.send(JSON.stringify({ action: 'end_consultation' }));
+}
+
+// Send conversation to orchestrator for analysis
+fetch(API_URL, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({
+action: 'get_directions',
+patient_id: currentPatientId,
+session_stage: 'end_consultation',
+input_text: transcript,
+language: currentLang
+})
+})
+.then(function(r) { return r.json(); })
+.then(function(data) {
+if (typeof data.body === 'string') { data = JSON.parse(data.body); }
+var responseText = data.response_text || 'Please proceed to the front desk.';
+var newStage = data.new_stage || 'discharge';
+currentSessionStage = newStage;
+
+// Translate and show result
+translateText(responseText, function(translated) {
+document.getElementById('consultation-section').classList.add('hidden');
+// Show directions in the post-triage-nav area
+var navDiv = document.getElementById('post-triage-nav');
+if (navDiv) {
+var nextAction = getNextAction(newStage);
+navDiv.innerHTML =
+'<div class="result-box result-success" style="margin-top: 12px;">' +
+'<strong>&#128204; ARIA:</strong><br>' +
+translated +
+'</div>' +
+(nextAction ? '<button class="btn-primary" style="margin-top: 12px; font-size: 18px; padding: 20px; max-width: 100%;" onclick="getDirections(\'' + nextAction.stage + '\')">' + nextAction.label + '</button>' : '<div class="result-box result-info" style="margin-top: 12px;"><strong>&#9989; Your visit is complete. Thank you!</strong></div>');
+}
+speakText(translated, currentLang);
+
+// Start polling for clinical notes in background
+pollClinicalNotes();
+});
+})
+.catch(function(err) {
+console.error('End consultation error:', err);
+document.getElementById('consultation-section').classList.add('hidden');
+getDirections('post_consultation');
+});
+}
+
+// ===== CLINICAL NOTES POLLING (HealthScribe) =====
+var clinicalNotesInterval = null;
+
+function pollClinicalNotes() {
+if (!currentPatientId) return;
+
+console.log('Starting clinical notes polling...');
+var attempts = 0;
+var maxAttempts = 20; // Poll for up to ~2 minutes
+
+clinicalNotesInterval = setInterval(function() {
+attempts++;
+if (attempts > maxAttempts) {
+clearInterval(clinicalNotesInterval);
+console.log('Clinical notes polling timed out.');
+return;
+}
+
+fetch(API_URL, {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify({
+action: 'get_directions',
+patient_id: currentPatientId,
+session_stage: 'get_clinical_notes',
+input_text: 'Check clinical notes status',
+language: currentLang
+})
+})
+.then(function(r) { return r.json(); })
+.then(function(data) {
+if (typeof data.body === 'string') { data = JSON.parse(data.body); }
+var responseText = data.response_text || '';
+var newStage = data.new_stage || '';
+
+console.log('Clinical notes poll:', responseText);
+
+if (newStage === 'discharge' && responseText.indexOf('generated') !== -1) {
+// Notes are ready and sent to doctor
+clearInterval(clinicalNotesInterval);
+var navDiv = document.getElementById('post-triage-nav');
+if (navDiv) {
+navDiv.innerHTML +=
+'<div class="result-box result-success" style="margin-top: 12px;">' +
+'<strong>&#128203; Clinical Notes:</strong><br>' +
+'Your clinical notes have been generated and sent to your doctor.' +
+'</div>';
+}
+speakText('Your clinical notes have been sent to the doctor.', currentLang);
+} else if (responseText.indexOf('failed') !== -1) {
+clearInterval(clinicalNotesInterval);
+console.log('Clinical notes generation failed.');
+}
+// Otherwise keep polling
+})
+.catch(function(err) {
+// Silently retry
+});
+}, 6000); // Poll every 6 seconds
+}
+
+function addChatBubble(role, mainText, secondaryText) {
+var chatWindow = document.getElementById('chat-window');
+var bubble = document.createElement('div');
+bubble.className = 'chat-bubble ' + (role === 'doctor' ? 'doctor-msg' : 'patient-msg');
+var label = role === 'doctor' ? '&#129658; Doctor' : '&#128483; You';
+bubble.innerHTML =
+'<div class="msg-label">' + label + '</div>' +
+'<div>' + mainText + '</div>' +
+(secondaryText ? '<div class="msg-translated">(' + secondaryText + ')</div>' : '');
+chatWindow.appendChild(bubble);
+chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+function addSystemMsg(text) {
+var chatWindow = document.getElementById('chat-window');
+var msg = document.createElement('div');
+msg.className = 'chat-system-msg';
+msg.textContent = '— ' + text + ' —';
+chatWindow.appendChild(msg);
+chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+function updateWsStatus(status) {
+var el = document.getElementById('ws-status');
+el.className = 'ws-status-bar ' + status;
+if (status === 'connected') el.innerHTML = '&#9679; Connected to Doctor';
+else if (status === 'connecting') el.innerHTML = '&#9679; Connecting...';
+else el.innerHTML = '&#9679; Disconnected';
+}
+
+function toggleChatVoice() {
+var btn = document.getElementById('chat-mic-btn');
+if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+var recognition = new SR();
+recognition.lang = currentLang === 'en' ? 'en-US' : currentLang;
+recognition.interimResults = false;
+recognition.onresult = function(e) {
+document.getElementById('chat-input').value = e.results[0][0].transcript;
+sendChatMsg();
+};
+recognition.onerror = function() { addSystemMsg('Voice not recognized. Please type.'); };
+recognition.onend = function() { btn.classList.remove('active'); };
+recognition.start();
+btn.classList.add('active');
+} else {
+addSystemMsg('Voice input not supported in this browser.');
+}
+}
+
+// ===== PAGE LOAD =====
+if (window.speechSynthesis) {
+window.speechSynthesis.getVoices();
+window.speechSynthesis.onvoiceschanged = function() { window.speechSynthesis.getVoices(); };
+}
+window.onload = function() {
+setTimeout(function() { speakText(translations['en'].welcome, 'en'); }, 1000);
+};
+</script>
+</body>
+</html>
