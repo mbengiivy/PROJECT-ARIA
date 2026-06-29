@@ -1,0 +1,678 @@
+
+import boto3
+import json
+import re
+import base64
+from datetime import datetime
+from decimal import Decimal
+
+lambda_client = boto3.client('lambda', region_name='us-east-1')
+ORCHESTRATOR_FN = 'aria-orchestrator'
+rekognition = boto3.client('rekognition', region_name='us-east-1')
+s3 = boto3.client('s3', region_name='us-east-1')
+textract = boto3.client('textract', region_name='us-east-1')
+transcribe = boto3.client('transcribe', region_name='us-east-1')
+translate_client = boto3.client('translate', region_name='us-east-1')
+polly = boto3.client('polly', region_name='us-east-1')
+dynamodb = boto3.resource('dynamodb', region_name='us-east-1')
+table = dynamodb.Table('aria-patient-records')
+
+BUCKET = 'aria-registrations'
+COLLECTION_ID = 'aria-patient-faces'
+
+
+def clean_kenyan_id_fields(raw_text):
+    lines = raw_text.upper().splitlines()
+    fields = {
+        'full_name': 'Unknown',
+        'id_number': 'N/A',
+        'dob': 'N/A',
+        'sex': 'N/A',
+        'district': 'N/A',
+        'place_of_issue': 'N/A'
+    }
+
+    for i, line in enumerate(lines):
+        if 'FULL NAME' in line or 'JINA KAMILI' in line:
+            if i + 1 < len(lines):
+                name = lines[i + 1].strip().title()
+                if name and name != '' and len(name) > 2:
+                    fields['full_name'] = name
+        elif 'DATE OF BIRTH' in line or 'TAREHE YA KUZALIWA' in line:
+            if i + 1 < len(lines):
+                fields['dob'] = lines[i + 1].strip()
+        elif 'SEX' in line or 'JINSIA' in line:
+            if i + 1 < len(lines):
+                sex_val = lines[i + 1].strip()
+                if sex_val in ['M', 'F', 'MALE', 'FEMALE', 'ME', 'KE']:
+                    fields['sex'] = sex_val
+        elif 'DISTRICT' in line or 'WILAYA' in line:
+            if i + 1 < len(lines):
+                fields['district'] = lines[i + 1].strip()
+        elif 'PLACE OF ISSUE' in line or 'MAHALI PALIPOTOLEWA' in line:
+            if i + 1 < len(lines):
+                fields['place_of_issue'] = lines[i + 1].strip()
+
+    for i, line in enumerate(lines):
+        if 'ID NO' in line or 'NAMBARI' in line or 'SERIAL' in line:
+            if i + 1 < len(lines):
+                nums = re.findall(r'\d{7,9}', lines[i + 1])
+                if nums:
+                    fields['id_number'] = nums[0]
+                    break
+
+    if fields['id_number'] == 'N/A':
+        for line in lines:
+            nums = re.findall(r'\d{7,9}', line)
+            for num in nums:
+                if len(num) >= 7 and len(num) <= 9:
+                    fields['id_number'] = num
+                    break
+            if fields['id_number'] != 'N/A':
+                break
+
+    if fields['id_number'] == 'N/A':
+        for line in lines:
+            cleaned = re.sub(r'[^0-9]', '', line)
+            if len(cleaned) >= 7 and len(cleaned) <= 9:
+                fields['id_number'] = cleaned
+                break
+
+    return fields
+
+
+def generate_patient_id(full_name, id_number):
+    name_part = full_name.upper().replace(' ', '-')[:20]
+    id_part = id_number.replace(' ', '')[-4:] if id_number != 'N/A' else '0000'
+    return f"PAT-{id_part}-{name_part}"
+
+
+def lambda_handler(event, context):
+    if 'body' in event:
+        body = json.loads(event['body']) if isinstance(event['body'], str) else event['body']
+    else:
+        body = event
+
+    action = body.get('action')
+    bucket = body.get('bucket', BUCKET)
+
+    def get_image(data):
+        if data.get('image_base64'):
+            image_data = data['image_base64']
+            if ',' in image_data:
+                image_data = image_data.split(',')[1]
+            image_bytes = base64.b64decode(image_data)
+            return {'Bytes': image_bytes}
+        elif data.get('photo_key'):
+            try:
+                s3_response = s3.get_object(
+                    Bucket=data.get('bucket', BUCKET),
+                    Key=data['photo_key']
+                )
+                image_bytes = s3_response['Body'].read()
+                return {'Bytes': image_bytes}
+            except Exception as e:
+                raise Exception(f"S3 download failed: {str(e)} | Bucket: {data.get('bucket')} | Key: {data.get('photo_key')}")
+        else:
+            raise Exception(f"No image provided. Got keys: {list(data.keys())}")
+
+    # ACTION: create_collection
+    if action == 'create_collection':
+        try:
+            response = rekognition.create_collection(CollectionId=COLLECTION_ID)
+            return api_response(200, {
+                'status': 'COLLECTION_CREATED',
+                'collection_id': COLLECTION_ID,
+                'message': 'Patient face collection created successfully!'
+            })
+        except rekognition.exceptions.ResourceAlreadyExistsException:
+            return api_response(200, {
+                'status': 'COLLECTION_EXISTS',
+                'message': 'Collection already exists. Ready to use!'
+            })
+
+    # ACTION: register_patient (simple face-only registration)
+    elif action == 'register_patient':
+        patient_id = body.get('patient_id', 'PAT-UNKNOWN')
+        try:
+            image = get_image(body)
+        except Exception as e:
+            return api_response(400, {'error': str(e)})
+        try:
+            response = rekognition.index_faces(
+                CollectionId=COLLECTION_ID,
+                Image=image,
+                ExternalImageId=patient_id,
+                DetectionAttributes=['ALL'],
+                MaxFaces=1
+            )
+            if response['FaceRecords']:
+                face = response['FaceRecords'][0]
+                face_detail = face['FaceDetail']
+                return api_response(200, {
+                    'status': 'PATIENT_REGISTERED',
+                    'patient_id': patient_id,
+                    'face_id': face['Face']['FaceId'],
+                    'confidence': round(face['Face']['Confidence'], 1),
+                    'details': {
+                        'age_range': f"{face_detail['AgeRange']['Low']}-{face_detail['AgeRange']['High']}",
+                        'gender': face_detail['Gender']['Value'],
+                        'smile': face_detail['Smile']['Value'],
+                        'eyeglasses': face_detail['Eyeglasses']['Value']
+                    },
+                    'timestamp': datetime.now().isoformat(),
+                    'message': f'New patient registered: {patient_id}'
+                })
+            else:
+                return api_response(400, {
+                    'status': 'NO_FACE_DETECTED',
+                    'message': 'No face found in the image. Please try a clearer photo.'
+                })
+        except Exception as e:
+            return api_response(500, {'error': f'Rekognition error: {str(e)}'})
+
+    # ACTION: register_with_id (Full registration with ID scan + face)
+    elif action == 'register_with_id':
+        full_name = body.get('full_name', 'Unknown')
+        id_number = body.get('id_number', 'N/A')
+        dob = body.get('dob', 'N/A')
+        preferred_language = body.get('preferred_language', 'en')
+        patient_id = generate_patient_id(full_name, id_number)
+
+        try:
+            existing = table.get_item(Key={'patient_id': patient_id})
+            if 'Item' in existing:
+                return api_response(200, {
+                    'status': 'PATIENT_EXISTS',
+                    'patient_id': patient_id,
+                    'patient_name': existing['Item'].get('patient_name', full_name),
+                    'message': f'Patient {full_name} already registered.'
+                })
+        except Exception:
+            pass
+
+        try:
+            image = get_image(body)
+        except Exception as e:
+            return api_response(400, {'error': str(e)})
+
+        try:
+            response = rekognition.index_faces(
+                CollectionId=COLLECTION_ID,
+                Image=image,
+                ExternalImageId=patient_id,
+                DetectionAttributes=['ALL'],
+                MaxFaces=1
+            )
+            if response['FaceRecords']:
+                face = response['FaceRecords'][0]
+                face_detail = face['FaceDetail']
+
+                table.put_item(Item={
+                    'patient_id': patient_id,
+                    'patient_name': full_name,
+                    'id_number': id_number,
+                    'dob': dob,
+                    'preferred_language': preferred_language,
+                    'face_id': face['Face']['FaceId'],
+                    'age_range': f"{face_detail['AgeRange']['Low']}-{face_detail['AgeRange']['High']}",
+                    'gender': face_detail['Gender']['Value'],
+                    'registered_at': datetime.now().isoformat(),
+                    'visit_count': 1,
+                    'triage_ready': False
+                })
+
+                try:
+                    face_b64 = body.get('image_base64', '')
+                    if face_b64:
+                        if ',' in face_b64:
+                            face_b64 = face_b64.split(',')[1]
+                        face_bytes = base64.b64decode(face_b64)
+                        s3.put_object(Bucket=bucket, Key=f"patients/{patient_id}/face.jpg", Body=face_bytes, ContentType='image/jpeg')
+                except Exception:
+                    pass
+
+                try:
+                    id_b64 = body.get('id_base64', '')
+                    if id_b64:
+                        if ',' in id_b64:
+                            id_b64 = id_b64.split(',')[1]
+                        id_bytes = base64.b64decode(id_b64)
+                        s3.put_object(Bucket=bucket, Key=f"patients/{patient_id}/id_document.jpg", Body=id_bytes, ContentType='image/jpeg')
+                except Exception:
+                    pass
+
+                return api_response(200, {
+                    'status': 'PATIENT_REGISTERED',
+                    'patient_id': patient_id,
+                    'patient_name': full_name,
+                    'face_id': face['Face']['FaceId'],
+                    'confidence': round(face['Face']['Confidence'], 1),
+                    'details': {
+                        'age_range': f"{face_detail['AgeRange']['Low']}-{face_detail['AgeRange']['High']}",
+                        'gender': face_detail['Gender']['Value'],
+                        'smile': face_detail['Smile']['Value'],
+                        'eyeglasses': face_detail['Eyeglasses']['Value']
+                    },
+                    'timestamp': datetime.now().isoformat(),
+                    'message': f'New patient registered: {full_name}'
+                })
+            else:
+                return api_response(400, {
+                    'status': 'NO_FACE_DETECTED',
+                    'message': 'No face found. Please try a clearer photo.'
+                })
+        except Exception as e:
+            return api_response(500, {'error': f'Registration error: {str(e)}'})
+
+    # ACTION: identify_patient
+    elif action == 'identify_patient':
+        try:
+            image = get_image(body)
+        except Exception as e:
+            return api_response(400, {'error': str(e)})
+        try:
+            response = rekognition.search_faces_by_image(
+                CollectionId=COLLECTION_ID,
+                Image=image,
+                FaceMatchThreshold=85,
+                MaxFaces=1
+            )
+            if response['FaceMatches']:
+                match = response['FaceMatches'][0]
+                patient_id = match['Face']['ExternalImageId']
+                confidence = match['Similarity']
+
+                patient_name = patient_id
+                preferred_language = 'en'
+                try:
+                    patient = table.get_item(Key={'patient_id': patient_id})
+                    if 'Item' in patient:
+                        patient_name = patient['Item'].get('patient_name', patient_id)
+                        preferred_language = patient['Item'].get('preferred_language', 'en')
+                        table.update_item(
+                            Key={'patient_id': patient_id},
+                            UpdateExpression='SET triage_ready = :f, last_visit = :t, visit_count = if_not_exists(visit_count, :zero) + :one REMOVE department, urgency_level, assigned_doctor, transcript, detected_language, transcript_english',
+                            ExpressionAttributeValues={
+                                ':f': False,
+                                ':t': datetime.now().isoformat(),
+                                ':zero': 0,
+                                ':one': 1
+                            }
+                        )
+                except Exception:
+                    pass
+
+                return api_response(200, {
+                    'status': 'PATIENT_IDENTIFIED',
+                    'patient_id': patient_id,
+                    'patient_name': patient_name,
+                    'preferred_language': preferred_language,
+                    'confidence': round(confidence, 1),
+                    'timestamp': datetime.now().isoformat(),
+                    'message': f'Welcome back! Patient: {patient_name} ({confidence:.1f}% match)',
+                    'next_step': 'PROCEED_TO_INTERACTION'
+                })
+            else:
+                return api_response(200, {
+                    'status': 'NEW_PATIENT',
+                    'message': 'Face not recognized. New patient registration required.',
+                    'next_step': 'REGISTER_PATIENT'
+                })
+        except rekognition.exceptions.InvalidParameterException:
+            return api_response(400, {'error': 'No face detected in image. Please ensure face is clearly visible.'})
+        except Exception as e:
+            return api_response(500, {'error': f'Rekognition error: {str(e)}'})
+
+    # ACTION: extract_id (Textract - scan ID document)
+    elif action == 'extract_id':
+        try:
+            image = get_image(body)
+        except Exception as e:
+            return api_response(400, {'error': str(e)})
+        try:
+            response = textract.detect_document_text(Document={'Bytes': image['Bytes']})
+            raw_text = ''
+            for block in response['Blocks']:
+                if block['BlockType'] == 'LINE':
+                    raw_text += block['Text'] + '\n'
+            fields = clean_kenyan_id_fields(raw_text)
+            return api_response(200, {
+                'status': 'ID_EXTRACTED',
+                'full_name': fields['full_name'],
+                'id_number': fields['id_number'],
+                'dob': fields['dob'],
+                'sex': fields['sex'],
+                'district': fields['district'],
+                'place_of_issue': fields['place_of_issue'],
+                'raw_text': raw_text[:500]
+            })
+        except Exception as e:
+            return api_response(500, {'error': f'Textract error: {str(e)}'})
+
+    # ACTION: save_audio (Save recording + start Transcribe)
+    elif action == 'save_audio':
+        patient_id = body.get('patient_id', 'UNKNOWN')
+        language = body.get('language', 'en')
+        audio_b64 = body.get('audio_base64', '')
+
+        if not audio_b64:
+            return api_response(400, {'error': 'No audio provided'})
+
+        try:
+            if ',' in audio_b64:
+                audio_b64 = audio_b64.split(',')[1]
+            audio_bytes = base64.b64decode(audio_b64)
+
+            timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
+            audio_key = f"audio/{patient_id}/{timestamp}.webm"
+
+            s3.put_object(Bucket=bucket, Key=audio_key, Body=audio_bytes, ContentType='audio/webm')
+
+            job_name = f"aria-{patient_id}-{timestamp}"
+            transcribe.start_transcription_job(
+                TranscriptionJobName=job_name,
+                Media={'MediaFileUri': f"s3://{bucket}/{audio_key}"},
+                MediaFormat='webm',
+                IdentifyLanguage=True,
+                LanguageOptions=['en-US', 'sw-KE', 'ar-SA', 'fr-FR']
+            )
+
+            try:
+                table.update_item(
+                    Key={'patient_id': patient_id},
+                    UpdateExpression='SET audio_key = :a, transcribe_job = :j, preferred_language = :l',
+                    ExpressionAttributeValues={':a': audio_key, ':j': job_name, ':l': language}
+                )
+            except Exception:
+                pass
+
+            return api_response(200, {
+                'status': 'AUDIO_SAVED',
+                'audio_key': audio_key,
+                'job_name': job_name,
+                'message': 'Audio saved and transcription started'
+            })
+        except Exception as e:
+            return api_response(500, {'error': f'Audio save error: {str(e)}'})
+
+    # ACTION: get_transcription (Poll transcription status)
+    elif action == 'get_transcription':
+        patient_id = body.get('patient_id', '')
+        try:
+            patient = table.get_item(Key={'patient_id': patient_id})
+            if 'Item' not in patient:
+                return api_response(404, {'error': 'Patient not found'})
+
+            job_name = patient['Item'].get('transcribe_job', '')
+            if not job_name:
+                return api_response(400, {'error': 'No transcription job found'})
+
+            job = transcribe.get_transcription_job(TranscriptionJobName=job_name)
+            status = job['TranscriptionJob']['TranscriptionJobStatus']
+
+            if status == 'COMPLETED':
+                result_uri = job['TranscriptionJob']['Transcript']['TranscriptFileUri']
+                import urllib.request
+                response = urllib.request.urlopen(result_uri)
+                result = json.loads(response.read())
+                transcript = result['results']['transcripts'][0]['transcript']
+
+                detected_lang = 'en'
+                if 'LanguageCode' in job['TranscriptionJob']:
+                    lang_code = job['TranscriptionJob']['LanguageCode']
+                    if 'sw' in lang_code:
+                        detected_lang = 'sw'
+                    elif 'ar' in lang_code:
+                        detected_lang = 'ar'
+                    elif 'fr' in lang_code:
+                        detected_lang = 'fr'
+
+                transcript_english = transcript
+                if detected_lang != 'en':
+                    try:
+                        lang_map = {'sw': 'sw', 'ar': 'ar', 'fr': 'fr'}
+                        source_lang = lang_map.get(detected_lang, 'auto')
+                        trans_result = translate_client.translate_text(
+                            Text=transcript,
+                            SourceLanguageCode=source_lang,
+                            TargetLanguageCode='en'
+                        )
+                        transcript_english = trans_result['TranslatedText']
+                    except Exception:
+                        transcript_english = transcript
+
+                table.update_item(
+                    Key={'patient_id': patient_id},
+                    UpdateExpression='SET transcript = :t, transcript_english = :te, detected_language = :dl, triage_ready = :tr',
+                    ExpressionAttributeValues={':t': transcript, ':te': transcript_english, ':dl': detected_lang, ':tr': True}
+                )
+
+                return api_response(200, {
+                    'status': 'TRANSCRIPTION_COMPLETE',
+                    'transcript': transcript,
+                    'transcript_english': transcript_english,
+                    'detected_language': detected_lang,
+                    'message': 'Transcription complete'
+                })
+            elif status == 'FAILED':
+                return api_response(500, {'status': 'TRANSCRIPTION_FAILED', 'error': 'Transcription job failed'})
+            else:
+                return api_response(200, {'status': 'IN_PROGRESS', 'message': 'Transcription still processing...'})
+        except Exception as e:
+            return api_response(500, {'error': f'Transcription check error: {str(e)}'})
+
+    # ACTION: get_triage_status (Poll for triage result)
+    elif action == 'get_triage_status':
+        patient_id = body.get('patient_id', '')
+        try:
+            patient = table.get_item(Key={'patient_id': patient_id})
+            item = patient.get('Item', {})
+            if item.get('department') or item.get('assigned_doctor'):
+                return api_response(200, {
+                    'status': 'TRIAGE_COMPLETE',
+                    'clinic': item.get('department', 'General Medicine'),
+                    'department': item.get('department', ''),
+                    'urgency': item.get('urgency_level', 'Normal'),
+                    'doctor': item.get('assigned_doctor', ''),
+                    'message': f"Assigned to {item.get('department', 'General Medicine')}"
+                })
+            else:
+                return api_response(200, {'status': 'PENDING'})
+        except Exception as e:
+            return api_response(200, {'status': 'PENDING', 'error': str(e)})
+
+    # ACTION: get_directions (Proxy to aria-orchestrator for post-triage navigation)
+    elif action == 'get_directions':
+        patient_id = body.get('patient_id', '')
+        session_stage = body.get('session_stage', 'triage_complete')
+        input_text = body.get('input_text', 'Where do I go next?')
+        language = body.get('language', 'en')
+
+        if not patient_id:
+            return api_response(400, {'error': 'patient_id is required'})
+
+        try:
+            payload = json.dumps({
+                'patient_id': patient_id,
+                'session_stage': session_stage,
+                'input_text': input_text,
+                'language': language
+            })
+
+            response = lambda_client.invoke(
+                FunctionName=ORCHESTRATOR_FN,
+                InvocationType='RequestResponse',
+                Payload=payload
+            )
+
+            response_payload = json.loads(response['Payload'].read())
+
+            if 'body' in response_payload:
+                orchestrator_body = response_payload['body']
+                if isinstance(orchestrator_body, str):
+                    orchestrator_body = json.loads(orchestrator_body)
+            else:
+                orchestrator_body = response_payload
+
+            return api_response(200, {
+                'status': 'DIRECTIONS_READY',
+                'response_text': orchestrator_body.get('response_text', 'Please ask a staff member for help.'),
+                'new_stage': orchestrator_body.get('new_stage', session_stage),
+                'polly_voice': orchestrator_body.get('polly_voice', 'Joanna'),
+                'speak': orchestrator_body.get('speak', True)
+            })
+
+        except Exception as e:
+            return api_response(500, {
+                'error': f'Orchestrator error: {str(e)}',
+                'status': 'DIRECTIONS_FAILED'
+            })
+
+    # ACTION: translate_text (Translate text to target language)
+    elif action == 'translate_text':
+        text = body.get('text', '')
+        target_language = body.get('target_language', 'en')
+        source_language = body.get('source_language', 'en')
+
+        if not text:
+            return api_response(400, {'error': 'No text provided'})
+
+        if target_language == source_language:
+            return api_response(200, {
+                'status': 'TRANSLATED',
+                'translated_text': text,
+                'source_language': source_language,
+                'target_language': target_language
+            })
+
+        lang_map = {'en': 'en', 'sw': 'sw', 'ar': 'ar', 'fr': 'fr'}
+        target_code = lang_map.get(target_language, 'en')
+        source_code = lang_map.get(source_language, 'en')
+
+        try:
+            result = translate_client.translate_text(
+                Text=text,
+                SourceLanguageCode=source_code,
+                TargetLanguageCode=target_code
+            )
+            return api_response(200, {
+                'status': 'TRANSLATED',
+                'translated_text': result['TranslatedText'],
+                'source_language': source_code,
+                'target_language': target_code
+            })
+        except Exception as e:
+            return api_response(200, {
+                'status': 'TRANSLATION_FAILED',
+                'translated_text': text,
+                'error': str(e)
+            })
+
+    # ACTION: speak_step (Polly TTS for UI instructions)
+    elif action == 'speak_step':
+        text = body.get('text', '')
+        language = body.get('language', 'en')
+        patient_id = body.get('patient_id', '')
+
+        if patient_id and not body.get('language'):
+            try:
+                patient = table.get_item(Key={'patient_id': patient_id})
+                if 'Item' in patient:
+                    language = patient['Item'].get('preferred_language', 'en')
+            except Exception:
+                pass
+
+        if language == 'sw':
+            return api_response(200, {'status': 'USE_BROWSER_SPEECH', 'text': text, 'language': 'sw'})
+
+        voice_map = {'en': 'Joanna', 'ar': 'Zeina', 'fr': 'Lea'}
+        voice = voice_map.get(language, 'Joanna')
+        engine = 'neural' if voice == 'Joanna' else 'standard'
+
+        try:
+            result = polly.synthesize_speech(Text=text, OutputFormat='mp3', VoiceId=voice, Engine=engine)
+            audio_bytes = result['AudioStream'].read()
+            audio_b64 = base64.b64encode(audio_bytes).decode()
+            return api_response(200, {'status': 'STEP_AUDIO', 'audio_base64': audio_b64, 'language': language, 'content_type': 'audio/mpeg'})
+        except Exception as e:
+            return api_response(200, {'status': 'USE_BROWSER_SPEECH', 'text': text, 'language': language})
+
+    # ACTION: speak (General Polly TTS)
+    elif action == 'speak':
+        text = body.get('text', '')
+        language = body.get('language', 'en')
+
+        if language == 'sw':
+            return api_response(200, {'status': 'USE_BROWSER_SPEECH', 'text': text, 'language': 'sw'})
+
+        voice_map = {'en': 'Joanna', 'ar': 'Zeina', 'fr': 'Lea'}
+        voice = voice_map.get(language, 'Joanna')
+        engine = 'neural' if voice == 'Joanna' else 'standard'
+
+        try:
+            result = polly.synthesize_speech(Text=text, OutputFormat='mp3', VoiceId=voice, Engine=engine)
+            audio_bytes = result['AudioStream'].read()
+            audio_b64 = base64.b64encode(audio_bytes).decode()
+            return api_response(200, {'status': 'AUDIO_GENERATED', 'audio_base64': audio_b64, 'language': language, 'content_type': 'audio/mpeg'})
+        except Exception as e:
+            return api_response(200, {'status': 'USE_BROWSER_SPEECH', 'text': text, 'language': language})
+
+    # ACTION: compare_faces
+    elif action == 'compare_faces':
+        try:
+            source_image = get_image({'photo_key': body.get('source_photo'), 'image_base64': body.get('source_base64'), 'bucket': bucket})
+        except Exception as e:
+            return api_response(400, {'error': f'Source image error: {str(e)}'})
+        try:
+            target_image = get_image({'photo_key': body.get('target_photo'), 'image_base64': body.get('target_base64'), 'bucket': bucket})
+        except Exception as e:
+            return api_response(400, {'error': f'Target image error: {str(e)}'})
+        try:
+            response = rekognition.compare_faces(SourceImage=source_image, TargetImage=target_image, SimilarityThreshold=80)
+            if response['FaceMatches']:
+                match = response['FaceMatches'][0]
+                similarity = match['Similarity']
+                return api_response(200, {'status': 'MATCH_FOUND', 'similarity': round(similarity, 1), 'message': f'Faces MATCH! Similarity: {similarity:.1f}%', 'verified': True})
+            else:
+                return api_response(200, {'status': 'NO_MATCH', 'message': 'Faces do NOT match.', 'verified': False})
+        except Exception as e:
+            return api_response(500, {'error': f'Compare error: {str(e)}'})
+
+    # ACTION: list_bucket (DEBUG UTILITY)
+    elif action == 'list_bucket':
+        try:
+            response = s3.list_objects_v2(Bucket=bucket, MaxKeys=20)
+            files = []
+            if 'Contents' in response:
+                for obj in response['Contents']:
+                    files.append({'key': obj['Key'], 'size': obj['Size'], 'last_modified': obj['LastModified'].isoformat()})
+            return api_response(200, {'status': 'BUCKET_CONTENTS', 'bucket': bucket, 'file_count': len(files), 'files': files})
+        except Exception as e:
+            return api_response(500, {'error': f'List bucket failed: {str(e)}'})
+
+    # INVALID ACTION
+    else:
+        return api_response(400, {
+            'error': 'Invalid action',
+            'valid_actions': [
+                'create_collection', 'register_patient', 'register_with_id',
+                'identify_patient', 'extract_id', 'save_audio',
+                'get_transcription', 'get_triage_status', 'get_directions',
+                'translate_text', 'speak_step', 'speak', 'compare_faces', 'list_bucket'
+            ]
+        })
+
+
+def api_response(status_code, body):
+    return {
+        'statusCode': status_code,
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS'
+        },
+        'body': json.dumps(body, default=str)
+    }
+
