@@ -1,0 +1,37 @@
+"""
+aria-ws-connect: Handles WebSocket $connect route.
+Stores connection ID and role in DynamoDB.
+"""
+
+import json
+import os
+import logging
+import boto3
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+dynamodb = boto3.resource("dynamodb")
+TABLE_NAME = os.environ["CONNECTIONS_TABLE"]  # aria-ws-connections
+
+
+def lambda_handler(event, context):
+    connection_id = event["requestContext"]["connectionId"]
+    
+    # Role comes from query string: ?role=patient or ?role=doctor
+    query_params = event.get("queryStringParameters") or {}
+    role = query_params.get("role", "patient")
+    patient_id = query_params.get("patient_id", "")
+    session_id = query_params.get("session_id", "")
+
+    table = dynamodb.Table(TABLE_NAME)
+    table.put_item(Item={
+        "connectionId": connection_id,
+        "role": role,
+        "patient_id": patient_id,
+        "session_id": session_id,
+    })
+
+    logger.info(f"Connected: {connection_id} | Role: {role} | Patient: {patient_id}")
+
+    return {"statusCode": 200, "body": "Connected"}
