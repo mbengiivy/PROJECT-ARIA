@@ -1,0 +1,81 @@
+"""
+aria-sns-notify: Sends a formatted triage summary to the doctor via Amazon SNS
+when a patient's symptom extraction is complete.
+"""
+
+import json
+import os
+import logging
+import boto3
+
+from aws_xray_sdk.core import xray_recorder
+from aws_xray_sdk.core import patch_all
+
+# Patches boto3, requests, etc. so all AWS calls are traced automatically
+patch_all()
+
+from botocore.exceptions import ClientError
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+sns = boto3.client("sns")
+
+TOPIC_ARN = os.environ["TOPIC_ARN"]
+
+
+def format_notification(event):
+    """Format clinical summary into a readable message for doctors."""
+    patient_id = event.get("patient_id", "Unknown")
+    summary = event.get("summary", "No summary available.")
+    symptoms = event.get("key_symptoms", [])
+    urgency = event.get("urgency_keywords", [])
+
+    urgency_flag = " ⚠️ URGENT" if urgency else ""
+
+    message = (
+        f"🏥 ARIA Triage Alert{urgency_flag}\n"
+        f"{'='*40}\n"
+        f"Patient: {patient_id}\n"
+        f"Summary: {summary}\n"
+        f"Symptoms: {', '.join(symptoms) if symptoms else 'None extracted'}\n"
+    )
+    if urgency:
+        message += f"Urgency indicators: {', '.join(urgency)}\n"
+
+    message += f"{'='*40}\nPlease review before patient arrives."
+    return message
+
+
+def lambda_handler(event, context):
+    """
+    Receives clinical summary from comprehend-extract,
+    formats it, and publishes to the doctor notification SNS topic.
+    """
+    logger.info(f"Received event: {json.dumps(event)}")
+
+    patient_id = event.get("patient_id", "Unknown")
+    message = format_notification(event)
+
+    try:
+        resp = sns.publish(
+            TopicArn=TOPIC_ARN,
+            Subject=f"ARIA Triage: {patient_id}",
+            Message=message,
+        )
+        message_id = resp["MessageId"]
+        logger.info(f"SNS published: {message_id}")
+    except ClientError as e:
+        logger.error(f"SNS publish failed: {e}")
+        return {
+            "patient_id": patient_id,
+            "status": "failed",
+            "error": str(e),
+        }
+
+    return {
+        "patient_id": patient_id,
+        "status": "sent",
+        "message_id": message_id,
+        "response_text": "Your triage summary has been sent to the doctor.",
+    }
