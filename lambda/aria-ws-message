@@ -1,0 +1,187 @@
+"""
+aria-ws-message: Handles WebSocket sendMessage route.
+Receives text from one side, translates, and sends to the other side.
+Also feeds the conversation to HealthScribe for clinical notes.
+"""
+
+import json
+import os
+import logging
+import boto3
+from boto3.dynamodb.conditions import Attr
+
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+dynamodb = boto3.resource("dynamodb")
+translate_client = boto3.client("translate")
+polly_client = boto3.client("polly")
+
+CONNECTIONS_TABLE = os.environ["CONNECTIONS_TABLE"]
+CONVERSATION_BUCKET = os.environ.get("CONVERSATION_BUCKET", "aria-consultations")
+
+# Polly voice mapping
+POLLY_VOICES = {
+    "en": "Joanna",
+    "sw": "Zeina",
+    "ar": "Zeina",
+    "fr": "Léa",
+    "so": "Zeina",
+}
+
+
+def get_api_gateway_client(event):
+    """Create API Gateway Management API client from event context."""
+    domain = event["requestContext"]["domainName"]
+    stage = event["requestContext"]["stage"]
+    endpoint = f"https://{domain}/{stage}"
+    return boto3.client("apigatewaymanagementapi", endpoint_url=endpoint)
+
+
+def get_other_connections(table, session_id, sender_connection_id):
+    """Find all connections in the same session that aren't the sender."""
+    response = table.scan(
+        FilterExpression=Attr("session_id").eq(session_id)
+    )
+    return [
+        item for item in response.get("Items", [])
+        if item["connectionId"] != sender_connection_id
+    ]
+
+
+def translate_text(text, source_lang, target_lang):
+    """Translate text between languages."""
+    if source_lang == target_lang:
+        return text
+
+    try:
+        result = translate_client.translate_text(
+            Text=text,
+            SourceLanguageCode=source_lang,
+            TargetLanguageCode=target_lang,
+        )
+        return result["TranslatedText"]
+    except Exception as e:
+        logger.error(f"Translation failed: {e}")
+        return text
+
+
+def lambda_handler(event, context):
+    """
+    Receives a message from patient or doctor.
+    Translates and forwards to the other party.
+    Stores conversation for HealthScribe processing.
+    """
+    connection_id = event["requestContext"]["connectionId"]
+    body = json.loads(event.get("body", "{}"))
+
+    message_text = body.get("text", "")
+    sender_lang = body.get("language", "en")
+    action = body.get("action", "sendMessage")
+
+    if not message_text and action != "end_consultation":
+        return {"statusCode": 400, "body": "No text provided"}
+
+    # Look up sender info
+    table = dynamodb.Table(CONNECTIONS_TABLE)
+    sender_record = table.get_item(Key={"connectionId": connection_id}).get("Item", {})
+    sender_role = sender_record.get("role", "patient")
+    session_id = sender_record.get("session_id", "")
+    patient_id = sender_record.get("patient_id", "")
+
+    logger.info(f"Message from {sender_role} ({connection_id}): {message_text}")
+
+    # Determine target language
+    if sender_role == "patient":
+        # Patient speaks their language → translate to English for doctor
+        target_lang = "en"
+    else:
+        # Doctor speaks English → translate to patient's language
+        target_lang = sender_lang
+
+    # Translate the message
+    translated_text = translate_text(message_text, sender_lang, target_lang)
+
+    # Build message payload for the other side
+    outgoing_message = {
+        "type": "message",
+        "from": sender_role,
+        "original_text": message_text,
+        "translated_text": translated_text,
+        "source_language": sender_lang,
+        "target_language": target_lang,
+    }
+
+    # If message is going to patient, include Polly voice info
+    if sender_role == "doctor":
+        outgoing_message["polly_voice"] = POLLY_VOICES.get(target_lang, "Joanna")
+        outgoing_message["speak"] = True
+
+    # Send to all other connections in this session
+    apigw = get_api_gateway_client(event)
+    other_connections = get_other_connections(table, session_id, connection_id)
+
+    stale_connections = []
+    for conn in other_connections:
+        try:
+            apigw.post_to_connection(
+                ConnectionId=conn["connectionId"],
+                Data=json.dumps(outgoing_message).encode("utf-8"),
+            )
+        except apigw.exceptions.GoneException:
+            stale_connections.append(conn["connectionId"])
+        except Exception as e:
+            logger.error(f"Failed to send to {conn['connectionId']}: {e}")
+
+    # Clean up stale connections
+    for stale_id in stale_connections:
+        table.delete_item(Key={"connectionId": stale_id})
+
+    # ── Store conversation turn for HealthScribe ────────────────────────────
+    english_text = translated_text if sender_role == "patient" else message_text
+    conversation_turn = {
+        "speaker": sender_role,
+        "text_english": english_text,
+        "text_original": message_text,
+        "language": sender_lang,
+    }
+
+    s3 = boto3.client("s3")
+    transcript_key = f"consultations/{session_id}/transcript.jsonl"
+
+    try:
+        try:
+            existing = s3.get_object(Bucket=CONVERSATION_BUCKET, Key=transcript_key)
+            existing_content = existing["Body"].read().decode("utf-8")
+        except s3.exceptions.NoSuchKey:
+            existing_content = ""
+
+        updated_content = existing_content + json.dumps(conversation_turn) + "\n"
+        s3.put_object(
+            Bucket=CONVERSATION_BUCKET,
+            Key=transcript_key,
+            Body=updated_content.encode("utf-8"),
+        )
+    except Exception as e:
+        logger.error(f"Failed to store conversation turn: {e}")
+
+    # ── Handle end of consultation ──────────────────────────────────────────
+    if action == "end_consultation":
+        end_message = {
+            "type": "consultation_ended",
+            "message": "Consultation complete. Summary is being generated.",
+            "patient_id": patient_id,
+            "session_id": session_id,
+        }
+        for conn in other_connections:
+            try:
+                apigw.post_to_connection(
+                    ConnectionId=conn["connectionId"],
+                    Data=json.dumps(end_message).encode("utf-8"),
+                )
+            except Exception:
+                pass
+
+        logger.info(f"Consultation ended for session {session_id}")
+
+    return {"statusCode": 200, "body": "Message sent"}
