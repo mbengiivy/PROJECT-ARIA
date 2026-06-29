@@ -1,0 +1,146 @@
+
+import boto3
+import json
+
+s3 = boto3.client('s3', region_name='us-east-1')
+textract = boto3.client('textract', region_name='us-east-1')
+
+DEFAULT_BUCKET = 'aria-registrations'
+
+
+def lambda_handler(event, context):
+    if 'body' in event:
+        body = json.loads(event['body']) if isinstance(event['body'], str) else event['body']
+    else:
+        body = event
+
+    action = body.get('action')
+    bucket = body.get('bucket', DEFAULT_BUCKET)
+    photo_key = body.get('photo_key')
+
+    if action == 'extract_text':
+        return extract_text(bucket, photo_key)
+    elif action == 'extract_form':
+        return extract_form(bucket, photo_key)
+    else:
+        return api_response(400, {
+            'error': 'Invalid action',
+            'valid_actions': ['extract_text', 'extract_form']
+        })
+
+
+def extract_text(bucket, photo_key):
+    """Extract all text lines from a document/image"""
+    if not photo_key:
+        return api_response(400, {'error': 'photo_key is required'})
+
+    try:
+        s3_response = s3.get_object(Bucket=bucket, Key=photo_key)
+        doc_bytes = s3_response['Body'].read()
+
+        response = textract.detect_document_text(
+            Document={'Bytes': doc_bytes}
+        )
+
+        lines = []
+        for block in response['Blocks']:
+            if block['BlockType'] == 'LINE':
+                lines.append({
+                    'text': block['Text'],
+                    'confidence': round(block['Confidence'], 1)
+                })
+
+        full_text = '\n'.join([line['text'] for line in lines])
+
+        return api_response(200, {
+            'status': 'TEXT_EXTRACTED',
+            'document': photo_key,
+            'line_count': len(lines),
+            'lines': lines,
+            'full_text': full_text
+        })
+    except Exception as e:
+        return api_response(500, {'error': f'Textract error: {str(e)}'})
+
+
+def extract_form(bucket, photo_key):
+    """Extract key-value pairs from forms (Name: ___, DOB: ___)"""
+    if not photo_key:
+        return api_response(400, {'error': 'photo_key is required'})
+
+    try:
+        s3_response = s3.get_object(Bucket=bucket, Key=photo_key)
+        doc_bytes = s3_response['Body'].read()
+
+        response = textract.analyze_document(
+            Document={'Bytes': doc_bytes},
+            FeatureTypes=['FORMS']
+        )
+
+        key_map = {}
+        value_map = {}
+        block_map = {}
+
+        for block in response['Blocks']:
+            block_id = block['Id']
+            block_map[block_id] = block
+            if block['BlockType'] == 'KEY_VALUE_SET':
+                if 'KEY' in block.get('EntityTypes', []):
+                    key_map[block_id] = block
+                else:
+                    value_map[block_id] = block
+
+        form_data = {}
+        for key_id, key_block in key_map.items():
+            key_text = get_text(key_block, block_map)
+            value_block = find_value_block(key_block, value_map)
+            value_text = get_text(value_block, block_map) if value_block else ''
+            if key_text:
+                form_data[key_text] = value_text
+
+        return api_response(200, {
+            'status': 'FORM_EXTRACTED',
+            'document': photo_key,
+            'fields_found': len(form_data),
+            'form_data': form_data
+        })
+    except Exception as e:
+        return api_response(500, {'error': f'Textract form error: {str(e)}'})
+
+
+def get_text(block, block_map):
+    """Get text from a block by following child relationships"""
+    text = ''
+    if 'Relationships' in block:
+        for rel in block['Relationships']:
+            if rel['Type'] == 'CHILD':
+                for child_id in rel['Ids']:
+                    child = block_map.get(child_id, {})
+                    if child.get('BlockType') == 'WORD':
+                        text += child.get('Text', '') + ' '
+    return text.strip()
+
+
+def find_value_block(key_block, value_map):
+    """Find the value block associated with a key block"""
+    if 'Relationships' in key_block:
+        for rel in key_block['Relationships']:
+            if rel['Type'] == 'VALUE':
+                for value_id in rel['Ids']:
+                    if value_id in value_map:
+                        return value_map[value_id]
+    return None
+
+
+def api_response(status_code, body):
+    return {
+        'statusCode': status_code,
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Methods': 'POST, OPTIONS'
+        },
+        'body': json.dumps(body)
+    }
+
